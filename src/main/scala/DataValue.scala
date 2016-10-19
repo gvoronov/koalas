@@ -1,7 +1,7 @@
 // Option 1
 import math._
 
-abstract class DataValue
+sealed abstract trait DataValue
 
 case class NumericalValue(val element: Double) extends DataElement {
   def apply(): Double = element
@@ -19,6 +19,8 @@ case class NumericalValue(val element: Double) extends DataElement {
 
   def **(val x: Double): NumericalValue = NumericalValue(pow(element, x))
   def **(val x: NumericalValue): NumericalValue = NumericalValue(pow(element, x()))
+
+  def unary_-: Double = NumericalValue(-element)
 }
 
 // Investigate using a companion object to maintain list of possible categories
