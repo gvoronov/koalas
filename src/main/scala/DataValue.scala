@@ -3,28 +3,29 @@ import math._
 
 sealed abstract trait DataValue
 
-case class NumericalValue(val element: Double) extends DataElement {
+case class NumericalValue(val element: Double) extends DataValue {
   def apply(): Double = element
-  def +(val x: Double): NumericalValue = NumericalValue(element + x)
-  def +(val x: NumericalValue): NumericalValue = NumericalValue(element + x())
 
-  def -(val x: Double): NumericalValue = NumericalValue(element - x)
-  def -(val x: NumericalValue): NumericalValue = NumericalValue(element - x())
+  def +(x: Double): NumericalValue = NumericalValue(element + x)
+  def +(x: NumericalValue): NumericalValue = NumericalValue(element + x())
 
-  def *(val x: Double): NumericalValue = NumericalValue(element * x)
-  def *(val x: NumericalValue): NumericalValue = NumericalValue(element * x())
+  def -(x: Double): NumericalValue = NumericalValue(element - x)
+  def -(x: NumericalValue): NumericalValue = NumericalValue(element - x())
 
-  def /(val x: Double): NumericalValue = NumericalValue(element / x)
-  def /(val x: NumericalValue): NumericalValue = NumericalValue(element / x())
+  def *(x: Double): NumericalValue = NumericalValue(element * x)
+  def *(x: NumericalValue): NumericalValue = NumericalValue(element * x())
 
-  def **(val x: Double): NumericalValue = NumericalValue(pow(element, x))
-  def **(val x: NumericalValue): NumericalValue = NumericalValue(pow(element, x()))
+  def /(x: Double): NumericalValue = NumericalValue(element / x)
+  def /(x: NumericalValue): NumericalValue = NumericalValue(element / x())
 
-  def unary_-: Double = NumericalValue(-element)
+  def **(x: Double): NumericalValue = NumericalValue(pow(element, x))
+  def **(x: NumericalValue): NumericalValue = NumericalValue(pow(element, x()))
+
+  def unary_-: = NumericalValue(-element)
 }
 
 // Investigate using a companion object to maintain list of possible categories
-case class CategoricalValue(val element: String) extends DataElement {
+case class CategoricalValue(val element: String) extends DataValue {
   def apply(): String = element
 }
 // case class DateValue()

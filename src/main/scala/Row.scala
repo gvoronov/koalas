@@ -22,7 +22,7 @@
   // val numericMap: Map[String, Double] = Map()
 // }
 
-case class Row(val paramMap: Map[String, DataValuev]){
+case class Row(val paramMap: Map[String, DataValue]){
   def apply[T](column: String): T = paramMap(column).asInstanceOf[T]
 
   def select(column: String): DataValue = paramMap(column)
