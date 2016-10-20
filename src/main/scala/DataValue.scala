@@ -25,8 +25,26 @@ case class NumericalValue(val element: Double) extends DataValue {
 }
 
 // Investigate using a companion object to maintain list of possible categories
-case class CategoricalValue(val element: String) extends DataValue {
+class CategoricalValue(val element: String) extends DataValue {
   def apply(): String = element
+}
+
+class ClassCategoricalValue(element: String, categoryClass: String)
+  extends CategoricalValue(element){
+    val category: Int = classCategoryMap(categoryClass)(element)
+    // Find a way to dump val element after check that it is in the class
+  }
+
+object CategoricalValue{
+  def apply(element: String): CategoricalValue = new CategoricalValue(element)
+  def apply(element: String, categoryClass: String): ClassCategoricalValue =
+    new ClassCategoricalValue(element, categoryClass)
+
+  lazy var classCategoryMap: Map[String, Map[String, Int]]
+  def setCategorySet(classCategory: String, categorySet: Set[String]) =
+    classCategory += (classCategory -> Map())
+  def getCategorySet(classCategory: String)
+
 }
 // case class DateValue()
 
