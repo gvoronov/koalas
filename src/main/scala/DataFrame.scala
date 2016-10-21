@@ -10,11 +10,16 @@ object DataFrame{
     val rowVector: Vector[Row] = Range(0, length).map(buildRow).toVector
 
     new DataFrame(rowVector)
-
-  // def fromCSV(file: String, schema: String)
   }
   // def apply(columnMap: Map[String, Series[DataValue]]) = {
   //   new DataFrame(rowIterable)
+  // }
+  //
+  // def fromCSV(filePath: String, schema: String) {
+  //   val data: List[List[DataValue]] = CSVFile.read(filePath, schema)
+  //   val rowVector: Vector[Row] =
+  //
+  //   new DataFrame(rowVector)
   // }
 }
 
