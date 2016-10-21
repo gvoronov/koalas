@@ -24,50 +24,32 @@ case class NumericalValue(val element: Double) extends DataValue {
   def unary_-: = NumericalValue(-element)
 }
 
-// Investigate using a companion object to maintain list of possible categories
-class CategoricalValue(val element: String) extends DataValue {
+sealed abstract trait CategoricalValue extends DataValue
+
+class SimpleCategoricalValue(val element: String) extends CategoricalValue {
   def apply(): String = element
 }
 
 class ClassCategoricalValue(element: String, categoryClass: String)
-  extends CategoricalValue(element){
-    val category: Int = classCategoryMap(categoryClass)(element)
-    // Find a way to dump val element after check that it is in the class
+  extends CategoricalValue {
+    val category: Int = ClassCategoricalValue.classCategoryMap(categoryClass)(element)
+
+    def apply(): String = ClassCategoricalValue.classCategoryStringMap(categoryClass)(category)
   }
 
-object CategoricalValue{
-  def apply(element: String): CategoricalValue = new CategoricalValue(element)
+object CategoricalValue {
+  def apply(element: String): SimpleCategoricalValue = new SimpleCategoricalValue(element)
   def apply(element: String, categoryClass: String): ClassCategoricalValue =
     new ClassCategoricalValue(element, categoryClass)
-
-  lazy var classCategoryMap: Map[String, Map[String, Int]]
-  def setCategorySet(classCategory: String, categorySet: Set[String]) =
-    classCategory += (classCategory -> Map())
-  def getCategorySet(classCategory: String)
-
 }
-// case class DateValue()
 
-// Option 2
-// abstract sealed trait DataElement {
-//   val numerical: Double
-//   val categorical: String
-//
-//   def isNumerical(): Boolean = ! numerical.equals(Double.NaN)
-//   def isCategorical(): Boolean = !(categorical == null)
-// }
-// case class Numerical(val numerical: Double) extends DataElement {
-//   val categorical: String = null
-//   def apply(): Double = numerical
-// }
-// case class Categorical(val categorical: String) extends DataElement {
-//   val numerical: Double = Double.NaN
-//   def apply(): String = categorical
-// }
+object ClassCategoricalValue {
+  private var classCategoryMap: Map[String, Map[String, Int]] = Map()
+  private var classCategoryStringMap: Map[String, Map[Int, String]] = Map()
 
-// Option 3
-// class DataElement[T](val element: T) {
-//   def apply(): T = element
-// }
-// class Numerical(element: Double) extends DataElement[Double](element)
-// class Categorical(element: String) extends DataElement[String](element)
+  def setCategorySet(classCategory: String, categorySet: Set[String]): Unit = {
+    classCategoryMap += (classCategory -> categorySet.zipWithIndex.toMap)
+    classCategoryStringMap += (classCategory -> classCategoryMap(classCategory).map(_.swap))
+  }
+  def getCategorySet(classCategory: String): Set[String] = classCategoryMap(classCategory).keySet
+}
