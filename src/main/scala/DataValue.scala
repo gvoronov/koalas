@@ -51,5 +51,6 @@ object ClassCategoricalValue {
     classCategoryMap += (classCategory -> categorySet.zipWithIndex.toMap)
     classCategoryStringMap += (classCategory -> classCategoryMap(classCategory).map(_.swap))
   }
+  // def appendCategorySet(classCategory: String, category: String): Unit =  {}
   def getCategorySet(classCategory: String): Set[String] = classCategoryMap(classCategory).keySet
 }
