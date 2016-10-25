@@ -4,17 +4,23 @@ abstract class Field {
 }
 
 case class Schema(val fields: List[Field]) {
-  def apply(stringList: List[String]): Row = {
-    if (fields.length != stringList.length)
-      throw new RuntimeException("stringList length does not match schema length")
-    Row(stringList.zip(fields).map(x => conApplyMap(x._1, x._2)).toMap)
+  def apply(dataList: List[String]): Row = {
+    if (fields.length != dataList.length)
+      throw new RuntimeException("dataList length does not match schema length")
+    Row(dataList.zip(fields).map(x => conApplyMap(x._1, x._2)).toMap)
   }
+  def apply(dataMap: Map[String, String]): Row =
+    Row(fields.map(field => conApplyMap(dataMap(field.column), field)).toMap)
+
+  def columns: List[String] = fields.map(_.column)
+  def length: Int = fields.length
 
   private def conApplyMap(data: String, field: Field): Tuple2[String, DataValue] = {
     val value: DataValue = field.fieldType match {
       // eventaully fix so that "" get mapped to NumericalValue(NaN)
       case "Numerical" => NumericalValue(data.toDouble)
       case "SimpleCategorical" => CategoricalValue(data)
+      // Eventaully fix so that new classes get appeneded to the ClassCategoricalValue object
       case "ClassCategorical" =>
         CategoricalValue(data, field.asInstanceOf[CategoricalField].classCategory)
     }

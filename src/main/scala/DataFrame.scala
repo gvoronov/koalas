@@ -17,12 +17,25 @@ object DataFrame{
 
   // Eventaully pass other CSVFile.read params
   // Need to figure out how to pass a schema that only picks a subset of cols
-  def fromCSV(filePath: String, schema: Schema) {
-    val data: List[List[String]] = CSVFile.read(filePath)
-    val rowVector: Vector[Row] = data.map(schema(_)).toVector
+  def fromCSV(filePath: String, schema: Schema,  delimiter: String = ",", header: Boolean = true) {
+    // def imapToList(imap: Map[String, String]): List[String] =
+    //   List.range(0, schema.length).map(icol => imap(icol.toString))
+
+    lazy val imapToList: Map[String, String] => List[String] =
+      (imap: Map[String, String]) =>
+      List.range(0, schema.length).map(icol => imap(icol.toString))
+    val data: List[Map[String, String]] = CSVFile.read(filePath, delimiter, header)
+
+    val rowVector: Vector[Row] = if (header)
+      data.map(schema(_)).toVector
+    else
+      data.map(imapToList).map(schema(_)).toVector
 
     new DataFrame(rowVector)
   }
+
+  // private def imapToList(imap: Map[String, String]): List[String] =
+  //   List.range(0, schema.length).map(icol => imap(icol.toString))
 }
 
 
