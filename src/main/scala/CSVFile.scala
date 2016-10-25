@@ -1,7 +1,7 @@
 import java.io.{FileReader, BufferedReader}
 
 object CSVFile{
-  def read(filePath: String, delimiter: String = ","): List[List[String]] = {
+  def read(filePath: String, delimiter: String = ",", header: Boolean = true): List[List[String]] = {
     val file = new FileReader(filePath)
     val reader = new BufferedReader(file)
 
@@ -19,7 +19,7 @@ object CSVFile{
       reader.close()
     }
 
-    data
+    if (header) data.tail else data
   }
   def write(path: String): Unit = {}
 }

@@ -14,13 +14,15 @@ object DataFrame{
   // def apply(columnMap: Map[String, Series[DataValue]]) = {
   //   new DataFrame(rowIterable)
   // }
-  //
-  // def fromCSV(filePath: String, schema: String) {
-  //   val data: List[List[DataValue]] = CSVFile.read(filePath, schema)
-  //   val rowVector: Vector[Row] =
-  //
-  //   new DataFrame(rowVector)
-  // }
+
+  // Eventaully pass other CSVFile.read params
+  // Need to figure out how to pass a schema that only picks a subset of cols
+  def fromCSV(filePath: String, schema: Schema) {
+    val data: List[List[String]] = CSVFile.read(filePath)
+    val rowVector: Vector[Row] = data.map(schema(_)).toVector
+
+    new DataFrame(rowVector)
+  }
 }
 
 
