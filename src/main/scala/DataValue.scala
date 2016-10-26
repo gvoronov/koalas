@@ -1,4 +1,3 @@
-// Option 1
 package datavalue
 
 import math._

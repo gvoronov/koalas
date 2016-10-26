@@ -31,8 +31,6 @@ object DataFrame{
   //   new DataFrame(rowIterable)
   // }
 
-  // Eventaully pass other CSVFile.read params
-  // Need to figure out how to pass a schema that only picks a subset of cols
   def fromCSV(
       filePath: String, schema: Schema,  delimiter: String = ",",
       header: Boolean = true, readerType: String = "File"): DataFrame = {
@@ -51,21 +49,4 @@ object DataFrame{
 
     new DataFrame(rowVector)
   }
-
-  // private def imapToList(imap: Map[String, String]): List[String] =
-  //   List.range(0, schema.length).map(icol => imap(icol.toString))
 }
-
-
-
-// import scala.collection.immutable.LinearSeq
-
-// class DataFrame extends LinearSeq[Row]
-// class DataFrame(val rows: LinearSeq[Row]) extends LinearSeq[Row] {
-//   def apply(idx: Int): Row = rows(idx)
-//   def length: Int = rows.length
-// }
-//
-// // object DataFrame {
-// //   def apply() = new DataFrame
-// // }
