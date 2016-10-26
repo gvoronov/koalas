@@ -6,8 +6,8 @@ import schema._
 import csvfile.CSVFile
 import series.Series
 
-class DataFrame(val rowVector: Vector[Row]) extends Series[Row](rowVector) {
-  def select[T](column: String): Series[T] = Series(rowVector.map(row => row[T](column)))
+class DataFrame(override val values: Vector[Row]) extends Series[Row](values) {
+  def select[T](column: String): Series[T] = Series(values.map(row => row[T](column)))
 
   def mapDF(f: Row => Row): DataFrame = DataFrame(values.map(f))
   override def filter(p: Row => Boolean): DataFrame = DataFrame(values.filter(p))
