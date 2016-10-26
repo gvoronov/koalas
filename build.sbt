@@ -14,3 +14,13 @@ libraryDependencies ++= Seq(
   "org.scalanlp" %% "breeze-natives" % "0.11.2",
   "org.scalanlp" %% "breeze-viz" % "0.11.2"
 )
+
+resolvers += "Sonatype OSS Snapshots" at
+  "https://oss.sonatype.org/content/repositories/snapshots"
+
+// For using scalameter for microbenchmarking
+libraryDependencies += "com.storm-enroute" %% "scalameter" % "0.7"
+testFrameworks += new TestFramework(
+  "org.scalameter.ScalaMeterFramework")
+logBuffered := false
+parallelExecution in Test := false

@@ -8,6 +8,14 @@ import series.Series
 
 class DataFrame(val rowVector: Vector[Row]) extends Series[Row](rowVector) {
   def select[T](column: String): Series[T] = Series(rowVector.map(row => row[T](column)))
+
+  def mapDF(f: Row => Row): DataFrame = DataFrame(values.map(f))
+  override def filter(p: Row => Boolean): DataFrame = DataFrame(values.filter(p))
+  override def groupBy[R](f: Row => R): Map[R, DataFrame] = values.groupBy(f).mapValues(DataFrame(_))
+  override def partition(p: Row => Boolean): (DataFrame, DataFrame) = {
+    val (left, right) = values.partition(p)
+    (DataFrame(left), DataFrame(right))
+  }
 }
 
 object DataFrame{
