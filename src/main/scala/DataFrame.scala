@@ -1,5 +1,13 @@
-class DataFrame(val rowVector: Vector[Row]) extends Series[Row](rowVector) {
+package dataframe
 
+import row.Row
+import datavalue._
+import schema._
+import csvfile.CSVFile
+import series.Series
+
+class DataFrame(val rowVector: Vector[Row]) extends Series[Row](rowVector) {
+  def select[T](column: String): Series[T] = Series(rowVector.map(row => row[T](column)))
 }
 
 object DataFrame{
@@ -17,14 +25,16 @@ object DataFrame{
 
   // Eventaully pass other CSVFile.read params
   // Need to figure out how to pass a schema that only picks a subset of cols
-  def fromCSV(filePath: String, schema: Schema,  delimiter: String = ",", header: Boolean = true) {
+  def fromCSV(
+      filePath: String, schema: Schema,  delimiter: String = ",",
+      header: Boolean = true, readerType: String = "File"): DataFrame = {
     // def imapToList(imap: Map[String, String]): List[String] =
     //   List.range(0, schema.length).map(icol => imap(icol.toString))
 
     lazy val imapToList: Map[String, String] => List[String] =
       (imap: Map[String, String]) =>
       List.range(0, schema.length).map(icol => imap(icol.toString))
-    val data: List[Map[String, String]] = CSVFile.read(filePath, delimiter, header)
+    val data: List[Map[String, String]] = CSVFile.read(filePath, delimiter, header, readerType)
 
     val rowVector: Vector[Row] = if (header)
       data.map(schema(_)).toVector

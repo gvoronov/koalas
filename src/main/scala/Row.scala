@@ -21,6 +21,9 @@
   //
   // val numericMap: Map[String, Double] = Map()
 // }
+package row
+
+import datavalue._
 
 case class Row(val paramMap: Map[String, DataValue]){
   def apply[T](column: String): T = paramMap(column).asInstanceOf[T]

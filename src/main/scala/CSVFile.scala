@@ -1,11 +1,22 @@
-import java.io.{FileReader, BufferedReader}
+package csvfile
+
+import java.io.{FileReader, InputStreamReader, BufferedReader}
 
 object CSVFile{
   // def read(filePath: String, delimiter: String = ",", header: Boolean = true): List[List[String]] = {
-  def read(filePath: String, delimiter: String = ",", header: Boolean = true):
-      List[Map[String, String]] = {
-    val file = new FileReader(filePath)
-    val reader = new BufferedReader(file)
+  def read(
+      filePath: String, delimiter: String = ",", header: Boolean = true,
+      readerType: String = "File"): List[Map[String, String]] = {
+    val reader = readerType match {
+      case "File" => {
+        val file = new FileReader(filePath)
+        new BufferedReader(file)
+      }
+      case "InputStream" => {
+        val inputStream = new InputStreamReader(getClass().getResourceAsStream(filePath))
+        new BufferedReader(inputStream)
+      }
+    }
 
     var data: List[List[String]] = List.empty
     // var row: List[String] = List()

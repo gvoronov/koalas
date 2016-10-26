@@ -1,4 +1,8 @@
+package timetest
+
 import breeze.stats.distributions._
+
+import datavalue._
 
 object TimeTest {
   def main(args: Array[String]) {

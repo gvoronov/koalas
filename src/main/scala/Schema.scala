@@ -1,3 +1,8 @@
+package schema
+
+import row.Row
+import datavalue._
+
 abstract class Field {
   val fieldType: String
   val column: String
@@ -12,6 +17,11 @@ case class Schema(val fields: List[Field]) {
   def apply(dataMap: Map[String, String]): Row =
     Row(fields.map(field => conApplyMap(dataMap(field.column), field)).toMap)
 
+  // At sompe point add methods for pre and post appending fields
+  def insert(i: Int, field: Field): Schema = {
+    val (head, tail) = fields.splitAt(i)
+    Schema(head ++ List(field) ++ tail)
+  }
   def columns: List[String] = fields.map(_.column)
   def length: Int = fields.length
 

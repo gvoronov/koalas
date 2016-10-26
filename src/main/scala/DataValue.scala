@@ -1,4 +1,6 @@
 // Option 1
+package datavalue
+
 import math._
 
 sealed abstract trait DataValue
