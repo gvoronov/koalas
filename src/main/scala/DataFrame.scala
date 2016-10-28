@@ -16,6 +16,8 @@ class DataFrame(override val values: Vector[Row]) extends Series[Row](values) {
     val (left, right) = values.partition(p)
     (DataFrame(left), DataFrame(right))
   }
+  // def update(column: string: values: Series[DataValue]): DataFrame
+  // def update(column: string: value: DataValue): DataFrame
 }
 
 object DataFrame{

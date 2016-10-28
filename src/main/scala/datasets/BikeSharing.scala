@@ -26,6 +26,7 @@ object BikeSharing {
   val hourSchema: Schema = daySchema.insert(
     5, CategoricalField("hr", "hr", (0 to 23).map(_.toString).toSet))
 
+  // Rename to loadDayDF and loadHourDF
   def getDayDF: DataFrame = DataFrame.fromCSV(
     "/datasets/bikesharing/day.csv", daySchema, readerType="InputStream")
 
