@@ -1,10 +1,10 @@
-package dataframe
+package koalas.dataframe
 
-import row.Row
-import datavalue._
-import schema._
-import csvfile.CSVFile
-import series.Series
+import koalas.row.Row
+import koalas.datavalue._
+import koalas.schema._
+import koalas.csvfile.CSVFile
+import koalas.series.Series
 
 class DataFrame(override val values: Vector[Row]) extends Series[Row](values) {
   def select[T](column: String): Series[T] = Series(values.map(row => row[T](column)))

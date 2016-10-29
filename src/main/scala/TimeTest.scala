@@ -1,8 +1,8 @@
-package timetest
+package koalas.timetest
 
 import breeze.stats.distributions._
-import datasets.bikesharing.BikeSharing
-import datavalue._
+import koalas.datasets.bikesharing.BikeSharing
+import koalas.datavalue._
 
 object TimeTest {
   def main(args: Array[String]) {

@@ -1,4 +1,4 @@
-package datasets.pricing
+package koalas.datasets.pricing
 
 import breeze.stats.distributions._
 object Pricing {

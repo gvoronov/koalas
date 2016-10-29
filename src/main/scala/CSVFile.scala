@@ -1,4 +1,4 @@
-package csvfile
+package koalas.csvfile
 
 import java.io.{FileReader, InputStreamReader, BufferedReader}
 

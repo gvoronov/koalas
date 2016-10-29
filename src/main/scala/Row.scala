@@ -1,6 +1,6 @@
-package row
+package koalas.row
 
-import datavalue._
+import koalas.datavalue._
 
 case class Row(val paramMap: Map[String, DataValue]){
   def apply[T](column: String): T = paramMap(column).asInstanceOf[T]

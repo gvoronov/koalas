@@ -1,7 +1,7 @@
-package schema
+package koalas.schema
 
-import row.Row
-import datavalue._
+import koalas.row.Row
+import koalas.datavalue._
 
 abstract class Field {
   val fieldType: String

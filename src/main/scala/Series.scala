@@ -1,4 +1,4 @@
-package series
+package koalas.series
 
 class Series[T](val values: Vector[T]){
   def apply(index: Int): T = values(index)

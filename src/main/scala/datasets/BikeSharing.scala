@@ -1,7 +1,7 @@
-package datasets.bikesharing
+package koalas.datasets.bikesharing
 
-import dataframe.DataFrame
-import schema._
+import koalas.dataframe.DataFrame
+import koalas.schema._
 
 object BikeSharing {
   val daySchema: Schema = Schema(List(
