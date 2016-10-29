@@ -2,49 +2,43 @@ package datavalue
 
 import math._
 
-sealed abstract trait DataValue
+sealed abstract class DataValue
 
 class NumericalValue(val element: Double) extends DataValue {
   def apply(): Double = element
 
-  def +(that: Double): NumericalValue = NumericalValue(element + that)
-  def +(that: NumericalValue): NumericalValue = NumericalValue(element + that())
+  override def hashCode: Int = ("Numerical", element).hashCode
+  override def equals(that: Any): Boolean = {
+    that match {
+      case _: NumericalValue => this.hashCode == that.hashCode
+      case _: Double => element equals that.asInstanceOf[Double]
+      case _: Int => element equals that.asInstanceOf[Int].toDouble
+      case _ => throw new RuntimeException("Can't evaluate equals")
+    }
+  }
 
-  def -(that: Double): NumericalValue = NumericalValue(element - that)
-  def -(that: NumericalValue): NumericalValue = NumericalValue(element - that())
+  private def anyToDouble(that: Any): Double = {
+    that match {
+      case _: NumericalValue => that.asInstanceOf[NumericalValue]()
+      case _: Double => that.asInstanceOf[Double]
+      case _: Int => that.asInstanceOf[Int].toDouble
+      case _ => throw new RuntimeException("Can't evaluate equals")
+    }
+  }
 
-  def *(that: Double): NumericalValue = NumericalValue(element * that)
-  def *(that: NumericalValue): NumericalValue = NumericalValue(element * that())
+  def +(that: Any): NumericalValue = NumericalValue(element + anyToDouble(that))
+  def -(that: Any): NumericalValue = NumericalValue(element - anyToDouble(that))
+  def *(that: Any): NumericalValue = NumericalValue(element * anyToDouble(that))
+  def /(that: Any): NumericalValue = NumericalValue(element / anyToDouble(that))
+  def **(that: Any): NumericalValue = NumericalValue(pow(element, anyToDouble(that)))
 
-  def /(that: Double): NumericalValue = NumericalValue(element / that)
-  def /(that: NumericalValue): NumericalValue = NumericalValue(element / that())
+  def >(that: Any): Boolean = element > anyToDouble(that)
+  def >=(that: Any): Boolean = element >= anyToDouble(that)
+  def <(that: Any): Boolean = element < anyToDouble(that)
+  def <=(that: Any): Boolean = element <= anyToDouble(that)
 
-  def **(that: Double): NumericalValue = NumericalValue(pow(element, that))
-  def **(that: NumericalValue): NumericalValue = NumericalValue(pow(element, that()))
-
-  def >(that: Double): Boolean = element > that
-  def >(that: NumericalValue): Boolean = element > that()
-
-  def >=(that: Double): Boolean = element >= that
-  def >=(that: NumericalValue): Boolean = element >= that()
-
-  def <(that: Double): Boolean = element < that
-  def <(that: NumericalValue): Boolean = element < that()
-
-  def <=(that: Double): Boolean = element <= that
-  def <=(that: NumericalValue): Boolean = element <= that()
-
-  def ==(that: Double): Boolean = element == that
-  def ==(that: NumericalValue): Boolean = element == that()
-
-  def !=(that: Double): Boolean = element != that
-  def !=(that: NumericalValue): Boolean = element != that()
-
-  def ~=(that: Double): Boolean = (element - that).abs < NumericalValue.precision
-  def ~=(that: NumericalValue): Boolean = (element - that()).abs < NumericalValue.precision
-
-  def ~=(that: Double, precision: Double): Boolean = (element - that).abs < precision
-  def ~=(that: NumericalValue, precision: Double): Boolean = (element - that()).abs < precision
+  def ~=(that: Any): Boolean = (element - anyToDouble(that)).abs < NumericalValue.precision
+  def ~=(that: Any, precision: Double): Boolean = (element - anyToDouble(that)).abs < precision
 
   def unary_-: = NumericalValue(-element)
 }
@@ -58,22 +52,16 @@ object NumericalValue {
   def getPrecision: Double = precision
 }
 
-sealed abstract trait CategoricalValue extends DataValue {
+sealed abstract class CategoricalValue extends DataValue {
   def apply(): String
-
-  def ==(that: String): Boolean = this() == that
-  def ==(that: CategoricalValue): Boolean = this() == that()
-
-  def !=(that: String): Boolean = this() != that
-  def !=(that: CategoricalValue): Boolean = this() != that()
 }
 
 class SimpleCategoricalValue(val element: String) extends CategoricalValue {
   def apply(): String = element
 
-  def ==(that: SimpleCategoricalValue): Boolean = element == that.element
-  def !=(that: SimpleCategoricalValue): Boolean = element != that.element
-  // def ==(other: String): Boolean = element == other
+  override def hashCode: Int = ("SimpleCategorical", element).hashCode
+  override def equals(that: Any): Boolean =
+    that.isInstanceOf[SimpleCategoricalValue] && this.hashCode == that.hashCode
 }
 
 class ClassCategoricalValue(element: String, categoryClass: String)
@@ -82,8 +70,9 @@ class ClassCategoricalValue(element: String, categoryClass: String)
 
   def apply(): String = ClassCategoricalValue.classCategoryStringMap(categoryClass)(category)
 
-  def ==(that: ClassCategoricalValue): Boolean = category == that.category
-  def !=(that: ClassCategoricalValue): Boolean = category != that.category
+  override def hashCode: Int = ("ClassCategorical", category).hashCode
+  override def equals(that: Any): Boolean =
+    that.isInstanceOf[ClassCategoricalValue] && this.hashCode == that.hashCode
 }
 
 object CategoricalValue {
