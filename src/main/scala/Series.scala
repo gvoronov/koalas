@@ -25,4 +25,6 @@ class Series[T](val values: Vector[T]){
 
 object Series{
   def apply[T](values: Vector[T]): Series[T] = new Series[T](values)
+  def apply[T](values: Iterable[T]): Series[T] = new Series[T](values.toVector)
+  // def apply[T](value: T*): Series[T]
 }

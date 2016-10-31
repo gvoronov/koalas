@@ -18,21 +18,48 @@ final class DataFrame(override val values: Vector[Row]) extends Series[Row](valu
   }
   // def update(column: string: values: Series[DataValue]): DataFrame
   // def update(column: string: value: DataValue): DataFrame
+  def sum(column: String): NumericalValue =
+    values.reduce(DataFrame.sumRowElement(column, _: Any, _: Any))
 }
 
 final object DataFrame{
-  def apply(rowVector: Vector[Row]): DataFrame = new DataFrame(rowVector)
-  def apply(columnMap: Map[String, Vector[DataValue]]) = {
+  def apply(rows: Vector[Row]): DataFrame = new DataFrame(rows)
+  def apply(rows: Iterable[Row]): DataFrame = new DataFrame(rows.toVector)
+  def apply(columnMap: Map[String, Vector[DataValue]]): DataFrame = {
     val length: Int = columnMap(columnMap.keysIterator.next).length
     def buildRow(i: Int): Row = Row(columnMap.map(column => column._1 -> column._2(i)))
     val rowVector: Vector[Row] = Range(0, length).map(buildRow).toVector
 
     new DataFrame(rowVector)
   }
+  // def apply(columnMap: Map[String, Iterable[DataValue]]): DataFrame
   // def apply(columnMap: Map[String, Series[DataValue]]) = {
   //   new DataFrame(rowIterable)
   // }
+  private def normalizeToNumerical(a: Any): NumericalValue = {
+    a match {
+      case _: Row => a.asInstanceOf[Row][NumericalValue](column)
+      case _: NumericalValue => a
+      case _ => throw new RuntimeException("method sum may only be applied to a column of " +
+        "values of type NumericalValue")
+    }
+  }
 
+  private def sumRowElement(column: String, a: Any, b: Any) = {
+    val numA: NumericalValue = normalizeToNumerical(a)
+    val numB: NumericalValue = normalizeToNumerical(b)
+    numA + numB
+  }
+
+  /**
+   * This method instantiates a new DataFrame from a csv file
+   * 
+   * @param filePath
+   * @param schema
+   * @param delimiter
+   * @param header
+   * @param readerType
+   */
   def fromCSV(
       filePath: String, schema: Schema,  delimiter: String = ",",
       header: Boolean = true, readerType: String = "File"): DataFrame = {
