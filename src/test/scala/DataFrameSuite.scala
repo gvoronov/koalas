@@ -12,6 +12,9 @@ class DataFrameSuite extends FunSuite {
 
     val atempSum2 = df.select[NumericalValue]("atemp").sum
     assert(atempSum2 ~= 8268.4955)
+
+    val atempSum3 = df.sum("atemp")
+    assert(atempSum3 ~= 8268.4955)
   }
 
   test("get numerical value series and get its mean") {
@@ -23,8 +26,8 @@ class DataFrameSuite extends FunSuite {
     val atempMean1: NumericalValue = atempMeanTuple._1 / atempMeanTuple._2
     assert(atempMean1 ~= 0.47577510213476037)
 
-    val atempSum2 = df.select[NumericalValue]("atemp").mean
-    assert(atempMean1 ~= 0.47577510213476037)
+    val atempMean2 = df.select[NumericalValue]("atemp").mean
+    assert(atempMean2 ~= 0.47577510213476037)
   }
 
   test("partition dataframe and sum partioned column") {

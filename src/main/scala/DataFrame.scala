@@ -19,9 +19,11 @@ final class DataFrame(override val values: Vector[Row]) extends Series[Row](valu
   // def update(column: string: values: Series[DataValue]): DataFrame
   // def update(column: string: value: DataValue): DataFrame
   def sum(column: String): NumericalValue =
-    values.reduce(DataFrame.sumRowElement(column, _: Any, _: Any))
+    values.asInstanceOf[Vector[Any]].reduce(DataFrame.sumRowElement(column)_)
+    .asInstanceOf[NumericalValue]
 }
 
+/** Factory for [[koalas.dataframe.DataFrame]] instances. */
 final object DataFrame{
   def apply(rows: Vector[Row]): DataFrame = new DataFrame(rows)
   def apply(rows: Iterable[Row]): DataFrame = new DataFrame(rows.toVector)
@@ -36,24 +38,24 @@ final object DataFrame{
   // def apply(columnMap: Map[String, Series[DataValue]]) = {
   //   new DataFrame(rowIterable)
   // }
-  private def normalizeToNumerical(a: Any): NumericalValue = {
+  private def normalizeToNumerical(column: String, a: Any): NumericalValue = {
     a match {
       case _: Row => a.asInstanceOf[Row][NumericalValue](column)
-      case _: NumericalValue => a
+      case _: NumericalValue => a.asInstanceOf[NumericalValue]
       case _ => throw new RuntimeException("method sum may only be applied to a column of " +
         "values of type NumericalValue")
     }
   }
 
-  private def sumRowElement(column: String, a: Any, b: Any) = {
-    val numA: NumericalValue = normalizeToNumerical(a)
-    val numB: NumericalValue = normalizeToNumerical(b)
-    numA + numB
+  private def sumRowElement(column: String)(a: Any, b: Any): Any = {
+    val numA: NumericalValue = normalizeToNumerical(column, a)
+    val numB: NumericalValue = normalizeToNumerical(column, b)
+    (numA + numB).asInstanceOf[Any]
   }
 
   /**
    * This method instantiates a new DataFrame from a csv file
-   * 
+   *
    * @param filePath
    * @param schema
    * @param delimiter
