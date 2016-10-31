@@ -1,9 +1,9 @@
 import org.scalatest.FunSuite
 import org.scalameter.measure
 
-import datasets.bikesharing.BikeSharing
-import datavalue._
-import dataframe.DataFrame
+import koalas.datasets.bikesharing.BikeSharing
+import koalas.datavalue._
+import koalas.dataframe.DataFrame
 
 class DataFrameBenchmarkSuite extends FunSuite {
   val df = BikeSharing.getHourDF

@@ -1,7 +1,7 @@
 import org.scalatest.FunSuite
 
-import datasets.bikesharing.BikeSharing
-import datavalue._
+import koalas.datasets.bikesharing.BikeSharing
+import koalas.datavalue._
 
 class DataFrameSuite extends FunSuite {
   val df = BikeSharing.getHourDF
@@ -10,8 +10,8 @@ class DataFrameSuite extends FunSuite {
     val atempSum1 = df.select[NumericalValue]("atemp").reduce((a, b) => a + b)
     assert(atempSum1 ~= 8268.4955)
 
-    // val atempSum2 = df.select[NumericalValue]("atemp").sum
-    // assert(atempSum2 ~= 8268.4955)
+    val atempSum2 = df.select[NumericalValue]("atemp").sum
+    assert(atempSum2 ~= 8268.4955)
   }
 
   test("get numerical value series and get its mean") {
@@ -22,9 +22,9 @@ class DataFrameSuite extends FunSuite {
 
     val atempMean1: NumericalValue = atempMeanTuple._1 / atempMeanTuple._2
     assert(atempMean1 ~= 0.47577510213476037)
-    
-    // val atempSum2 = df.select[NumericalValue]("atemp").mean
-    // assert(atempSum2 ~= 8268.4955)
+
+    val atempSum2 = df.select[NumericalValue]("atemp").mean
+    assert(atempMean1 ~= 0.47577510213476037)
   }
 
   test("partition dataframe and sum partioned column") {
