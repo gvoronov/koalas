@@ -8,7 +8,7 @@ abstract class Field {
   val column: String
 }
 
-case class Schema(val fields: List[Field]) {
+final case class Schema(val fields: List[Field]) {
   def apply(dataList: List[String]): Row = {
     if (fields.length != dataList.length)
       throw new RuntimeException("dataList length does not match schema length")
@@ -38,11 +38,11 @@ case class Schema(val fields: List[Field]) {
   }
 }
 
-case class NumericalField(val column: String) extends Field {
+final case class NumericalField(val column: String) extends Field {
   val fieldType = "Numerical"
 }
 
-case class CategoricalField(
+final case class CategoricalField(
     val column: String, val classCategory: String = null, categorySet: Set[String] = Set())
     extends Field {
   val fieldType = if (classCategory == null)

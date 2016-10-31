@@ -2,9 +2,9 @@ package koalas.datavalue
 
 import math._
 
-sealed abstract class DataValue
+abstract class DataValue
 
-class NumericalValue(val element: Double) extends DataValue {
+final class NumericalValue(val element: Double) extends DataValue {
   def apply(): Double = element
 
   override def hashCode: Int = ("Numerical", element).hashCode
@@ -22,7 +22,7 @@ class NumericalValue(val element: Double) extends DataValue {
       case _: NumericalValue => that.asInstanceOf[NumericalValue]()
       case _: Double => that.asInstanceOf[Double]
       case _: Int => that.asInstanceOf[Int].toDouble
-      case _ => throw new RuntimeException("Can't evaluate equals")
+      case _ => throw new RuntimeException("Can't recast operand, that, as a Double!")
     }
   }
 
@@ -43,7 +43,7 @@ class NumericalValue(val element: Double) extends DataValue {
   def unary_-: = NumericalValue(-element)
 }
 
-object NumericalValue {
+final object NumericalValue {
   private var precision = 1.0E-6
 
   def apply(element: Double): NumericalValue = new NumericalValue(element)
@@ -52,11 +52,11 @@ object NumericalValue {
   def getPrecision: Double = precision
 }
 
-sealed abstract class CategoricalValue extends DataValue {
+abstract class CategoricalValue extends DataValue {
   def apply(): String
 }
 
-class SimpleCategoricalValue(val element: String) extends CategoricalValue {
+final class SimpleCategoricalValue(val element: String) extends CategoricalValue {
   def apply(): String = element
 
   override def hashCode: Int = ("SimpleCategorical", element).hashCode
@@ -64,7 +64,7 @@ class SimpleCategoricalValue(val element: String) extends CategoricalValue {
     that.isInstanceOf[SimpleCategoricalValue] && this.hashCode == that.hashCode
 }
 
-class ClassCategoricalValue(element: String, categoryClass: String)
+final class ClassCategoricalValue(element: String, categoryClass: String)
     extends CategoricalValue {
   val category: Int = ClassCategoricalValue.classCategoryMap(categoryClass)(element)
 
@@ -75,13 +75,13 @@ class ClassCategoricalValue(element: String, categoryClass: String)
     that.isInstanceOf[ClassCategoricalValue] && this.hashCode == that.hashCode
 }
 
-object CategoricalValue {
+final object CategoricalValue {
   def apply(element: String): SimpleCategoricalValue = new SimpleCategoricalValue(element)
   def apply(element: String, categoryClass: String): ClassCategoricalValue =
     new ClassCategoricalValue(element, categoryClass)
 }
 
-object ClassCategoricalValue {
+final object ClassCategoricalValue {
   private var classCategoryMap: Map[String, Map[String, Int]] = Map()
   private var classCategoryStringMap: Map[String, Map[Int, String]] = Map()
 

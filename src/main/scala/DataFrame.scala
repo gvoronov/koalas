@@ -6,7 +6,7 @@ import koalas.schema._
 import koalas.csvfile.CSVFile
 import koalas.series.Series
 
-class DataFrame(override val values: Vector[Row]) extends Series[Row](values) {
+final class DataFrame(override val values: Vector[Row]) extends Series[Row](values) {
   def select[T](column: String): Series[T] = Series(values.map(row => row[T](column)))
 
   def mapDF(f: Row => Row): DataFrame = DataFrame(values.map(f))
@@ -20,7 +20,7 @@ class DataFrame(override val values: Vector[Row]) extends Series[Row](values) {
   // def update(column: string: value: DataValue): DataFrame
 }
 
-object DataFrame{
+final object DataFrame{
   def apply(rowVector: Vector[Row]): DataFrame = new DataFrame(rowVector)
   def apply(columnMap: Map[String, Vector[DataValue]]) = {
     val length: Int = columnMap(columnMap.keysIterator.next).length
