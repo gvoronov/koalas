@@ -43,6 +43,7 @@ final class NumericalValue(val element: Double) extends DataValue {
   def unary_-: = NumericalValue(-element)
 }
 
+/** Factory for [[koalas.datavalue.NumericalValue]] instances. */
 final object NumericalValue {
   private var precision = 1.0E-6
 
@@ -50,6 +51,26 @@ final object NumericalValue {
 
   def setPrecision(newPrecision: Double): Unit = {precision = newPrecision}
   def getPrecision: Double = precision
+}
+
+/**
+ * This trait can be used to define implicit object so that collections of NumericalValue's can be
+ * summed via collection sum method.
+ */
+trait NumericNV extends Numeric[NumericalValue] {
+  // Members declared in scala.math.Numeric
+  def fromInt(x: Int): NumericalValue = NumericalValue(x)
+  def minus(x: NumericalValue, y: NumericalValue): NumericalValue = x - y
+  def negate(x: NumericalValue): NumericalValue = -x
+  def plus(x: NumericalValue, y: NumericalValue): NumericalValue = x + y
+  def times(x: NumericalValue, y: NumericalValue): NumericalValue = x * y
+  def toDouble(x: NumericalValue): Double = x()
+  def toFloat(x: NumericalValue): Float = x().toFloat
+  def toInt(x: NumericalValue): Int = x().toInt
+  def toLong(x: NumericalValue): Long = x().toLong
+
+  // Members declared in scala.math.Ordering
+  def compare(x: NumericalValue, y: NumericalValue): Int = x() compare y()
 }
 
 abstract class CategoricalValue extends DataValue {
@@ -75,12 +96,21 @@ final class ClassCategoricalValue(element: String, categoryClass: String)
     that.isInstanceOf[ClassCategoricalValue] && this.hashCode == that.hashCode
 }
 
+/**
+ * Factory for [[koalas.datavalue.SimpleCategoricalValue]] and
+ * [[koalas.datavalue.ClassCategoricalValue]] instances.
+ */
 final object CategoricalValue {
   def apply(element: String): SimpleCategoricalValue = new SimpleCategoricalValue(element)
   def apply(element: String, categoryClass: String): ClassCategoricalValue =
     new ClassCategoricalValue(element, categoryClass)
 }
 
+/**
+ * Companion object but not factory for [[koalas.datavalue.ClassCategoricalValue]] instances. THis
+ * object mangages category labels for class values where all labels are known, so individual
+ * instaNces don't have to. 
+ */
 final object ClassCategoricalValue {
   private var classCategoryMap: Map[String, Map[String, Int]] = Map()
   private var classCategoryStringMap: Map[String, Map[Int, String]] = Map()

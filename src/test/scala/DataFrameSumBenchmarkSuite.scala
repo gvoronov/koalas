@@ -1,4 +1,4 @@
-package test
+package koalas.test
 
 import org.scalatest.FunSuite
 import org.scalameter._
@@ -9,6 +9,8 @@ import koalas.dataframe.DataFrame
 
 class DataFrameSumBenchmarkSuite extends FunSuite {
   val df = BikeSharing.getHourDF
+
+  implicit object NumericNV extends NumericNV
 
   test("series sum") {
     val partionTime = config(
@@ -47,7 +49,8 @@ class DataFrameSumBenchmarkSuite extends FunSuite {
     } withMeasurer {
       new Measurer.IgnoringGC
     } measure {
-      val atempSum = df.select[NumericalValue]("atemp").map(_()).values.sum
+      val atempSum = df.select[NumericalValue]("atemp").values.sum
+      // val atempSum = df.select[NumericalValue]("atemp").map(_()).values.sum
     }
     info("took " + partionTime.toString)
   }

@@ -11,6 +11,7 @@ case class Row(val paramMap: Map[String, DataValue]){
   def select(columns: Iterable[String]): Row = Row(paramMap filterKeys columns.toSet)
 
   def +(kvPair: Tuple2[String, DataValue]): Row = Row(paramMap + kvPair)
-
   def ++(otherRow: Row): Row = Row(paramMap ++ otherRow.paramMap)
+
+  def update(column: String, value: DataValue): Row = Row(paramMap + (column -> value))
 }

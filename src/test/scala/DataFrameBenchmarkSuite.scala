@@ -1,3 +1,5 @@
+package koalas.test
+
 import org.scalatest.FunSuite
 import org.scalameter._
 

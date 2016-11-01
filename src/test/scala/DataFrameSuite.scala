@@ -1,3 +1,5 @@
+package koalas.test
+
 import org.scalatest.FunSuite
 
 import koalas.datasets.bikesharing.BikeSharing

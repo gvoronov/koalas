@@ -9,6 +9,7 @@ import koalas.series.Series
 final class DataFrame(override val values: Vector[Row]) extends Series[Row](values) {
   def select[T](column: String): Series[T] = Series(values.map(row => row[T](column)))
 
+  def map(f: Row => Row): DataFrame = DataFrame(values.map(f))
   def mapDF(f: Row => Row): DataFrame = DataFrame(values.map(f))
   override def filter(p: Row => Boolean): DataFrame = DataFrame(values.filter(p))
   override def groupBy[R](f: Row => R): Map[R, DataFrame] = values.groupBy(f).mapValues(DataFrame(_))
@@ -16,8 +17,12 @@ final class DataFrame(override val values: Vector[Row]) extends Series[Row](valu
     val (left, right) = values.partition(p)
     (DataFrame(left), DataFrame(right))
   }
-  // def update(column: string: values: Series[DataValue]): DataFrame
-  // def update(column: string: value: DataValue): DataFrame
+
+  def update(column: String, value: DataValue): DataFrame = map(_.update(column, value))
+  def update(column: String, colValues: Series[DataValue]): DataFrame = DataFrame(
+    values.zip(colValues.values).map(zval => zval._1.update(column, zval._2))
+  )
+
   def sum(column: String): NumericalValue =
     values.asInstanceOf[Vector[Any]].reduce(DataFrame.sumRowElement(column)_)
     .asInstanceOf[NumericalValue]
