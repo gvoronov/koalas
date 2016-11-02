@@ -8,7 +8,7 @@ import koalas.datavalue._
 import koalas.dataframe.DataFrame
 
 class DataFrameBenchmarkSuite extends FunSuite {
-  val df = BikeSharing.getHourDF
+  val df = BikeSharing.loadHourDF
 
   test("partition bike-sharing dataframe and sum partioned column") {
     val partionTime = config(

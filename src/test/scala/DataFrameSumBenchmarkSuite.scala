@@ -8,7 +8,7 @@ import koalas.datavalue._
 import koalas.dataframe.DataFrame
 
 class DataFrameSumBenchmarkSuite extends FunSuite {
-  val df = BikeSharing.getHourDF
+  val df = BikeSharing.loadHourDF
 
   implicit object NumericNV extends NumericNV
 

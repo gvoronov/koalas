@@ -7,8 +7,11 @@ import koalas.csvfile.CSVFile
 import koalas.series.Series
 
 final class DataFrame(override val values: Vector[Row]) extends Series[Row](values) {
+  // Make apply irow and select apply
+  def apply[T](column: String): Series[T] = Series(values.map(row => row[T](column)))
   def select[T](column: String): Series[T] = Series(values.map(row => row[T](column)))
-
+  def irow(i: Int): Row = values(i)
+  
   def map(f: Row => Row): DataFrame = DataFrame(values.map(f))
   def mapDF(f: Row => Row): DataFrame = DataFrame(values.map(f))
   override def filter(p: Row => Boolean): DataFrame = DataFrame(values.filter(p))

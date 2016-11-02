@@ -13,7 +13,7 @@ object TimeTest {
     println(x.sum)
     println(y.reduce((a, b) => a + b))
 
-    val df = BikeSharing.getHourDF
+    val df = BikeSharing.loadHourDF
 
     println("about to split and sum partitions")
     val (leftDF, rightDF) = df.partition(row => row[NumericalValue]("cnt") >= 162)

@@ -2,7 +2,10 @@ package koalas.datavalue
 
 import math._
 
-abstract class DataValue
+abstract class DataValue {
+  def apply(): Any
+  override def toString: String = this().toString
+}
 
 final class NumericalValue(val element: Double) extends DataValue {
   def apply(): Double = element
@@ -109,7 +112,7 @@ final object CategoricalValue {
 /**
  * Companion object but not factory for [[koalas.datavalue.ClassCategoricalValue]] instances. THis
  * object mangages category labels for class values where all labels are known, so individual
- * instaNces don't have to. 
+ * instaNces don't have to.
  */
 final object ClassCategoricalValue {
   private var classCategoryMap: Map[String, Map[String, Int]] = Map()

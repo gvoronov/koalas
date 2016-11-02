@@ -27,10 +27,10 @@ object BikeSharing {
     5, CategoricalField("hr", "hr", (0 to 23).map(_.toString).toSet))
 
   // Rename to loadDayDF and loadHourDF
-  def getDayDF: DataFrame = DataFrame.fromCSV(
+  def loadDayDF: DataFrame = DataFrame.fromCSV(
     "/datasets/bikesharing/day.csv", daySchema, readerType="InputStream")
 
-  def getHourDF: DataFrame = DataFrame.fromCSV(
+  def loadHourDF: DataFrame = DataFrame.fromCSV(
     "/datasets/bikesharing/hour.csv", hourSchema, readerType="InputStream")
   // def makeDF(): DataFrame = {}
 }

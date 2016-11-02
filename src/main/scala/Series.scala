@@ -2,7 +2,7 @@ package koalas.series
 
 import koalas.datavalue._
 
-class Series[T](val values: Vector[T]){
+class Series[+T](val values: Vector[T]){
   def apply(index: Int): T = values(index)
 
   def map[R](f: (T) => R): Series[R] = Series[R](values.map(f))
@@ -13,6 +13,18 @@ class Series[T](val values: Vector[T]){
     val (left, right) = values.partition(p)
     (Series[T](left), Series[T](right))
   }
+
+  def -(that: Series[NumericalValue]): Series[NumericalValue] =
+    Series(values.zip(that.values).map(pair => pair._1.asInstanceOf[NumericalValue] - pair._2))
+
+  def **(that: Series[NumericalValue]): Series[NumericalValue] =
+    Series(values.zip(that.values).map(pair => pair._1.asInstanceOf[NumericalValue] ** pair._2))
+  def **(that: NumericalValue): Series[NumericalValue] =
+    Series(values.map(_.asInstanceOf[NumericalValue]**that))
+  def **(that: Double): Series[NumericalValue] =
+    Series(values.map(_.asInstanceOf[NumericalValue]**that))
+  def **(that: Int): Series[NumericalValue] =
+    Series(values.map(_.asInstanceOf[NumericalValue]**that))
 
   lazy val length: Int = values.length
   lazy val sum: NumericalValue = values.asInstanceOf[Vector[NumericalValue]].reduce(_ + _)
