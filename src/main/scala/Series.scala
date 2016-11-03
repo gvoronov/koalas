@@ -42,6 +42,11 @@ class Series[+T](val values: Vector[T]){
     }
   }
 
+  /**
+   * This method will check that self type matches that of right operatnd. Following this, it will
+   * pattern match onto the the appropriate domaon type of the binary op.
+   */
+  // private def selectBinaryOpInType[A](that: Any):
   def +(that: Any): Series[NumericalValue] = binaryOpOnAny[NumericalValue, NumericalValue](that, (a, b) => a + b)
   def -(that: Any): Series[NumericalValue] = binaryOpOnAny[NumericalValue, NumericalValue](that, (a, b) => a - b)
   def *(that: Any): Series[NumericalValue] = binaryOpOnAny[NumericalValue, NumericalValue](that, (a, b) => a * b)
