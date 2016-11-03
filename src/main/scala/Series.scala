@@ -18,70 +18,44 @@ class Series[+T](val values: Vector[T]){
     (Series[T](left), Series[T](right))
   }
 
-  private def binaryOpOnAnyToNumericalValue(
-      that: Any, op: (NumericalValue, NumericalValue) => NumericalValue):
-      Series[NumericalValue] = {
-
+  private def binaryOpOnAny[D, R](that: Any, op: (D, D) => R): Series[R] = {
     that match {
       case series: Series[Any] => series(0) match {
         case element: NumericalValue => Series(
           values.zip(series.values).map(pair => op(
-            pair._1.asInstanceOf[NumericalValue], pair._2.asInstanceOf[NumericalValue]))
+            pair._1.asInstanceOf[D], pair._2.asInstanceOf[D]))
         )
         case _ => throw new RuntimeException("")
       }
       case iterable: Iterable[Any] => iterable.last match {
         case element: NumericalValue => Series(
           values.zip(iterable).map(pair => op(
-            pair._1.asInstanceOf[NumericalValue], pair._2.asInstanceOf[NumericalValue])).toVector
+            pair._1.asInstanceOf[D], pair._2.asInstanceOf[D])).toVector
         )
         case _ => throw new RuntimeException("")
       }
-      case value: NumericalValue => Series(values.map(y => op(y.asInstanceOf[NumericalValue], value)))
-      case value: Double => Series(values.map(y => op(y.asInstanceOf[NumericalValue], NumericalValue(value))))
-      case value: Int => Series(values.map(y => op(y.asInstanceOf[NumericalValue], NumericalValue(value))))
+      case value: NumericalValue => Series(values.map(y => op(y.asInstanceOf[D], value.asInstanceOf[D])))
+      case value: Double => Series(values.map(y => op(y.asInstanceOf[D], NumericalValue(value).asInstanceOf[D])))
+      case value: Int => Series(values.map(y => op(y.asInstanceOf[D], NumericalValue(value).asInstanceOf[D])))
       case _ => throw new RuntimeException(
         "Series binary opertion attempted with non-numerical type")
     }
   }
 
-  private def binaryOpOnAnyToBoolean(
-      that: Any, op: (NumericalValue, NumericalValue) => Boolean):
-      Series[Boolean] = {
-    that match {
-      case series: Series[Any] => series(0) match {
-        case element: NumericalValue => Series(
-          values.zip(series.values).map(pair => op(
-            pair._1.asInstanceOf[NumericalValue], pair._2.asInstanceOf[NumericalValue]))
-        )
-        case _ => throw new RuntimeException("")
-      }
-      case iterable: Iterable[Any] => iterable.last match {
-        case element: NumericalValue => Series(
-          values.zip(iterable).map(pair => op(
-            pair._1.asInstanceOf[NumericalValue], pair._2.asInstanceOf[NumericalValue])).toVector
-        )
-        case _ => throw new RuntimeException("")
-      }
-      case value: NumericalValue => Series(values.map(y => op(y.asInstanceOf[NumericalValue], value)))
-      case value: Double => Series(values.map(y => op(y.asInstanceOf[NumericalValue], NumericalValue(value))))
-      case value: Int => Series(values.map(y => op(y.asInstanceOf[NumericalValue], NumericalValue(value))))
-      case _ => throw new RuntimeException(
-        "Series binary opertion attempted with non-numerical type")
-    }
-  }
+  def +(that: Any): Series[NumericalValue] = binaryOpOnAny[NumericalValue, NumericalValue](that, (a, b) => a + b)
+  def -(that: Any): Series[NumericalValue] = binaryOpOnAny[NumericalValue, NumericalValue](that, (a, b) => a - b)
+  def *(that: Any): Series[NumericalValue] = binaryOpOnAny[NumericalValue, NumericalValue](that, (a, b) => a * b)
+  def /(that: Any): Series[NumericalValue] = binaryOpOnAny[NumericalValue, NumericalValue](that, (a, b) => a / b)
+  def **(that: Any): Series[NumericalValue] = binaryOpOnAny[NumericalValue, NumericalValue](that, (a, b) => a ** b)
 
-  def +(that: Any): Series[NumericalValue] = binaryOpOnAnyToNumericalValue(that, (a, b) => a + b)
-  def -(that: Any): Series[NumericalValue] = binaryOpOnAnyToNumericalValue(that, (a, b) => a - b)
-  def *(that: Any): Series[NumericalValue] = binaryOpOnAnyToNumericalValue(that, (a, b) => a * b)
-  def /(that: Any): Series[NumericalValue] = binaryOpOnAnyToNumericalValue(that, (a, b) => a / b)
-  def **(that: Any): Series[NumericalValue] = binaryOpOnAnyToNumericalValue(that, (a, b) => a ** b)
-
-  def :>(that: Any): Series[Boolean] = binaryOpOnAnyToBoolean(that, (a, b) => a > b)
-  def :>=(that: Any): Series[Boolean] = binaryOpOnAnyToBoolean(that, (a, b) => a >= b)
-  def :<(that: Any): Series[Boolean] = binaryOpOnAnyToBoolean(that, (a, b) => a < b)
-  def :<=(that: Any): Series[Boolean] = binaryOpOnAnyToBoolean(that, (a, b) => a <= b)
-  def :==(that: Any): Series[Boolean] = binaryOpOnAnyToBoolean(that, (a, b) => a == b)
+  def :>(that: Any): Series[Boolean] = binaryOpOnAny[NumericalValue, Boolean](that, (a, b) => a > b)
+  def :>=(that: Any): Series[Boolean] = binaryOpOnAny[NumericalValue, Boolean](that, (a, b) => a >= b)
+  def :<(that: Any): Series[Boolean] = binaryOpOnAny[NumericalValue, Boolean](that, (a, b) => a < b)
+  def :<=(that: Any): Series[Boolean] = binaryOpOnAny[NumericalValue, Boolean](that, (a, b) => a <= b)
+  def :~=(that: Any): Series[Boolean] = binaryOpOnAny[NumericalValue, Boolean](that, (a, b) => a ~= b)
+  def :~=(that: Any, precision: Double): Series[Boolean] = binaryOpOnAny[NumericalValue, Boolean](that, (a, b) => a ~= (b, precision))
+  def :==(that: Any): Series[Boolean] = binaryOpOnAny[Any, Boolean](that, (a, b) => a equals b)
+  def :!=(that: Any): Series[Boolean] = binaryOpOnAny[Any, Boolean](that, (a, b) => !(a equals b))
 
   lazy val length: Int = values.length
   lazy val sum: NumericalValue = values.asInstanceOf[Vector[NumericalValue]].reduce(_ + _)
