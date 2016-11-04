@@ -85,9 +85,9 @@ class Series[+T](val values: Vector[T]){
 
   trait NumericLike {
     def +(that: DataValue): DataValue
-    def +(that: NumericalValue): NumericalValue = this + that
+    // def +(that: NumericalValue): NumericalValue = this + that
   }
-  def +[A <: DataValue with NumericLike](that: Any): Series[T] = binaryOpOnAny[A, A](that, (a: A, b: A) => (a + b).asInstanceOf[A]).asInstanceOf[Series[T]]
+  def +[A <% NumericalValue](that: Any): Series[T] = binaryOpOnAny[A, A](that, (a: A, b: A) => (a + b).asInstanceOf[A]).asInstanceOf[Series[T]]
 
   // def +(that: Any): Series[T] = {
   //   last match {
