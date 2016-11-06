@@ -3,6 +3,7 @@ package koalas.series
 // import shapeless.TypeCase
 
 import koalas.datavalue._
+import koalas.numericalops.NumericalOps
 
 class Series[+T](val values: Vector[T]){
   def apply(index: Int): T = values(index)
@@ -82,13 +83,23 @@ class Series[+T](val values: Vector[T]){
    */
   // private def selectBinaryOpInType[A](that: Any):
   // def +(that: Any): Series[NumericalValue] = binaryOpOnAny[NumericalValue, NumericalValue](that, (a, b) => a + b)
+  //
+  // trait NumericLike[A] {
+  //   def +(that: A): A
+  //   // def +(that: NumericalValue): NumericalValue = this + that
+  // }
+  // type A = T with NumericLike[T]
 
-  trait NumericLike {
-    def +(that: DataValue): DataValue
-    // def +(that: NumericalValue): NumericalValue = this + that
-  }
-  def +[A <% NumericalValue](that: Any): Series[T] = binaryOpOnAny[A, A](that, (a: A, b: A) => (a + b).asInstanceOf[A]).asInstanceOf[Series[T]]
+  // def sum[B >: T](implicit num: Numeric[B], a: B, b: B): B  = num.plus(a, b)
 
+
+  // def binaryOp
+  // def +(that: Any): Series[T] = binaryOpOnAny[A, A](that, (a: A, b: A) => (a + b).asInstanceOf[A]).asInstanceOf[Series[T]]
+
+  def +[B >: T](that: Any)(implicit num: Numeric[B]):Series[T] =
+    binaryOpOnAny[B, B](that, (a, b) => num.plus(a, b)).asInstanceOf[Series[T]]
+  // def /[B >: T](that: Any)(implicit num: NumericalOps[B]):Series[T] =
+  //   binaryOpOnAny[B, B](that, (a, b) => num.divide(a, b)).asInstanceOf[Series[T]]
   // def +(that: Any): Series[T] = {
   //   last match {
   //     case _: NumericalValue =>
@@ -147,6 +158,7 @@ class Series[+T](val values: Vector[T]){
   def :==(that: Any): Series[Boolean] = binaryOpOnAny[Any, Boolean](that, (a, b) => a equals b)
   def :!=(that: Any): Series[Boolean] = binaryOpOnAny[Any, Boolean](that, (a, b) => !(a equals b))
 
+  override def toString: String = values.toString
   lazy val length: Int = values.length
   lazy val sum: NumericalValue = values.asInstanceOf[Vector[NumericalValue]].reduce(_ + _)
   lazy val mean: NumericalValue = sum / length
@@ -159,5 +171,5 @@ class Series[+T](val values: Vector[T]){
 object Series{
   def apply[T](values: Vector[T]): Series[T] = new Series[T](values)
   def apply[T](values: Iterable[T]): Series[T] = new Series[T](values.toVector)
-  // def apply[T](value: T*): Series[T]
+  def apply[T](values: T*): Series[T] = new Series[T](values.toVector)
 }
