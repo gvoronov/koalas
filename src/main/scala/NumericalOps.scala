@@ -9,16 +9,7 @@ object NumericalOpsImps {
   implicit object NumericalValueOps extends FractionalNumericalValue
   implicit object DoubleOps extends FractionalDouble
   implicit object IntOps extends NumericInt
-  /**
-   * This trait can be used to define implicit object so that collections of NumericalValue's can be
-   * summed via collection sum method.
-   */
-
 }
-//
-// trait FractionalPower[T] extends Fractional[T] {
-//   def pow(x: T, y: T): T
-// }
 
 trait Exponentialable[T] {
   def pow(x: T, y: T): T
@@ -74,19 +65,3 @@ trait FractionalDouble extends Fractional[Double] {
   // Members declared in scala.math.Ordering
   def compare(x: Double, y: Double): Int = x compare y
 }
-// trait NumericalOps[T] {
-//   def plus(x: T, y: T): T
-//   def minus(x: T, y: T): T
-//   def times(x: T, y: T): T
-//   def divide(x: T, y: T): T
-//   def negate(x: T): T
-//   def fromInt(x: Int): T
-//   def toInt(x: T): Int
-//   def toLong(x: T): Long
-//   def toFloat(x: T): Float
-//   def toDouble(x: T): Double
-//
-//   def zero = fromInt(0)
-//   def one = fromInt(1)
-//
-// }
