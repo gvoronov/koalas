@@ -1,19 +1,15 @@
 package koalas.series
 
+import scala.collection.mutable.{Map => MutableMap}
+
 import koalas.datavalue._
 import koalas.numericalops._
 import koalas.numericalops.NumericalOpsImps._
 
 class Series[+T](val values: Vector[T]){
-  // mabye do with
-  // private val mySummary: MutableMap[String, Any] = MutableMap.empty
-  private var mySum: Option[Any] = None
-  private var myMean: Option[Any] = None
-  private var myX1: Option[Any] = None
-  private var myX2: Option[Any] = None
-  private var myVariance: Option[Any] = None
-
+  private val mySummary: MutableMap[String, Any] = MutableMap.empty
   lazy val length: Int = values.length
+  
   def apply(index: Int): T = values(index)
   def apply(subset: Series[Boolean]): Series[T] =
     Series(values.zip(subset.values).filter(_._2).map(_._1))
@@ -99,26 +95,20 @@ class Series[+T](val values: Vector[T]){
   def :~=(that: Any): Series[Boolean] = binaryOpOnAny[NumericalValue, Boolean](that, (a, b) => a ~= b)
   def :~=(that: Any, precision: Double): Series[Boolean] = binaryOpOnAny[NumericalValue, Boolean](that, (a, b) => a ~= (b, precision))
 
-  def sum[B >: T](implicit num: Numeric[B]): B = mySum.getOrElse({
-    mySum = Some(values.reduce(num.plus))
-    mySum.get
-  }).asInstanceOf[B]
-  def mean[A >: T](implicit num: Fractional[A]): A = myMean.getOrElse({
-    myMean = Some(num.div(sum(num), num.fromInt(length)))
-    myMean.get
-  }).asInstanceOf[A]
-  def moment1[A >: T](implicit num: Fractional[A]): A = myX1.getOrElse({
-    myX1 = Some(mean(num))
-    myX1.get
-  }).asInstanceOf[A]
-  def moment2[A >: T](implicit num: Fractional[A] with Exponentialable[A]): A = myX2.getOrElse({
-    myX2 = Some(num.div(map(num.pow(_, num.fromInt(2))).reduce(num.plus), num.fromInt(length)))
-    myX2.get
-  }).asInstanceOf[A]
-  def variance[A >: T](implicit num: Fractional[A] with Exponentialable[A]): A = myVariance.getOrElse({
-    myVariance = Some(num.minus(moment2(num), num.pow(moment1(num), num.fromInt(2))))
-    myVariance.get
-  }).asInstanceOf[A]
+  def sum[B >: T](implicit num: Numeric[B]): B = mySummary.getOrElseUpdate(
+    "sum", values.reduce(num.plus)).asInstanceOf[B]
+  def mean[A >: T](implicit num: Fractional[A]): A = mySummary.getOrElseUpdate(
+    "mean", num.div(sum(num), num.fromInt(length))).asInstanceOf[A]
+  def moment1[A >: T](implicit num: Fractional[A]): A = mySummary.getOrElseUpdate(
+    "moment1", mean(num)).asInstanceOf[A]
+  def moment2[A >: T](implicit num: Fractional[A] with Exponentialable[A]): A =
+    mySummary.getOrElseUpdate(
+      "moment2", num.div(map(num.pow(_, num.fromInt(2))).reduce(num.plus), num.fromInt(length))
+    ).asInstanceOf[A]
+  def variance[A >: T](implicit num: Fractional[A] with Exponentialable[A]): A =
+    mySummary.getOrElseUpdate(
+      "variance", num.minus(moment2(num), num.pow(moment1(num), num.fromInt(2)))
+    ).asInstanceOf[A]
 }
 
 object Series{
