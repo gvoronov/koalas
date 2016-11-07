@@ -5,12 +5,13 @@ import org.scalameter._
 
 import koalas.datasets.bikesharing.BikeSharing
 import koalas.datavalue._
+import koalas.numericalops.NumericalOpsImps._
 import koalas.dataframe.DataFrame
 
 class DataFrameSumBenchmarkSuite extends FunSuite {
   val df = BikeSharing.loadHourDF
 
-  implicit object NumericNV extends NumericNV
+  // implicit object NumericNV extends NumericNV
 
   test("series sum") {
     val partionTime = config(

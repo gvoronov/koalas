@@ -5,6 +5,7 @@ import org.scalatest.Assertions._
 
 import koalas.datasets.bikesharing.BikeSharing
 import koalas.datavalue._
+import koalas.numericalops.NumericalOpsImps._
 
 class DataFrameSuite extends FunSuite {
   val df = BikeSharing.loadHourDF

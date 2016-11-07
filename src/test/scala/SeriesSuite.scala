@@ -8,7 +8,7 @@ import org.scalatest.Assertions._
 
 // import koalas.datasets.bikesharing.BikeSharing
 import koalas.datavalue._
-import koalas.numericalops.NumericalOps._
+import koalas.numericalops.NumericalOpsImps._
 import koalas.series.Series
 
 class SeriesSuite extends FunSuite {
@@ -30,9 +30,22 @@ class SeriesSuite extends FunSuite {
     Series(NumericalValue(1), NumericalValue(2), NumericalValue(3))
 
   test("element wise operations") {
-    info("doubles + doubles: " + (doubles + doubles).toString)
-    info("ints + ints: " + (ints + ints).toString)
-    info("numericalvalues + numericalvalues: " + (numericalvalues + numericalvalues).toString)
+    info("doubles + doubles: " + (doubles :+ doubles).toString)
+    info("ints + ints: " + (ints :+ ints).toString)
+    info("numericalvalues + numericalvalues: " + (numericalvalues :+ numericalvalues).toString)
+
+    info("doubles / doubles: " + (doubles :/ doubles).toString)
+    // info("ints / ints: " + (ints / ints).toString)
+    info("numericalvalues / numericalvalues: " + (numericalvalues :/ numericalvalues).toString)
+
+    // info("doubles ** doubles: " + (doubles ** doubles).toString)
+    // info("ints ** ints: " + (ints ** ints).toString)
+    info("numericalvalues ** numericalvalues: " + (numericalvalues :** numericalvalues).toString)
+
+    info("doubles :> 2: " + (doubles :> 2).toString)
+    info("ints :> 2: " + (ints :> 2).toString)
+    info("numericalvalues :> 2: " + (numericalvalues :> 2).toString)
+
   }
 
 }
