@@ -23,6 +23,9 @@ final class DataFrame(override val values: Vector[Row]) extends Series[Row](valu
     (DataFrame(left), DataFrame(right))
   }
 
+  def +(that: Row): DataFrame = DataFrame(values :+ that)
+  def ++(that: DataFrame): DataFrame = DataFrame(values ++ that.values)
+
   def update(column: String, value: DataValue): DataFrame = map(_.update(column, value))
   def update(column: String, colValues: Series[DataValue]): DataFrame = DataFrame(
     values.zip(colValues.values).map(zval => zval._1.update(column, zval._2))

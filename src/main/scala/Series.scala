@@ -9,7 +9,7 @@ import koalas.numericalops.NumericalOpsImps._
 class Series[+T](val values: Vector[T]){
   private val mySummary: MutableMap[String, Any] = MutableMap.empty
   lazy val length: Int = values.length
-  
+
   def apply(index: Int): T = values(index)
   def apply(subset: Series[Boolean]): Series[T] =
     Series(values.zip(subset.values).filter(_._2).map(_._1))
@@ -22,6 +22,9 @@ class Series[+T](val values: Vector[T]){
     val (left, right) = values.partition(p)
     (Series[T](left), Series[T](right))
   }
+
+  def +[A >: T](that: A): Series[A] = Series(values :+ that)
+  def ++[A >: T](that: Series[A]): Series[A] = Series(values ++ that.values)
 
   override def toString: String = values.toString
 
@@ -68,6 +71,12 @@ class Series[+T](val values: Vector[T]){
     }
   }
 
+  /**
+   * Element-wise addition
+   * @param that
+   * @param num
+   * @tparam B
+   */
   def :+[B >: T](that: Any)(implicit num: Numeric[B]): Series[T] =
     binaryOpOnAny[B, B](that, num.plus).asInstanceOf[Series[T]]
   def :-[B >: T](that: Any)(implicit num: Numeric[B]): Series[T] =

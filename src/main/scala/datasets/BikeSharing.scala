@@ -28,9 +28,9 @@ object BikeSharing {
 
   // Rename to loadDayDF and loadHourDF
   def loadDayDF: DataFrame = DataFrame.fromCSV(
-    "/datasets/bikesharing/day.csv", daySchema, readerType="InputStream")
+    "/koalas/datasets//bikesharing/day.csv", daySchema, readerType="InputStream")
 
   def loadHourDF: DataFrame = DataFrame.fromCSV(
-    "/datasets/bikesharing/hour.csv", hourSchema, readerType="InputStream")
+    "/koalas/datasets/bikesharing/hour.csv", hourSchema, readerType="InputStream")
   // def makeDF(): DataFrame = {}
 }
