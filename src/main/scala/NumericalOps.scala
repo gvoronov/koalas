@@ -5,7 +5,7 @@ import math._
 
 import koalas.datavalue._
 
-object NumericalOpsImps {
+object NumericalOps {
   implicit object NumericalValueOps extends FractionalNumericalValue
   implicit object DoubleOps extends FractionalDouble
   implicit object IntOps extends NumericInt

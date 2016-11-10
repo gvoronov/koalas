@@ -4,7 +4,7 @@ import scala.collection.mutable.{Map => MutableMap}
 
 import koalas.datavalue._
 import koalas.numericalops._
-import koalas.numericalops.NumericalOpsImps._
+import koalas.numericalops.NumericalOps._
 
 class Series[+T](val values: Vector[T]){
   private val mySummary: MutableMap[String, Any] = MutableMap.empty
@@ -124,4 +124,6 @@ object Series{
   def apply[T](values: Vector[T]): Series[T] = new Series[T](values)
   def apply[T](values: Iterable[T]): Series[T] = new Series[T](values.toVector)
   def apply[T](values: T*): Series[T] = new Series[T](values.toVector)
+
+  def empty[T]: Series[T] = new Series[T](Vector.empty)
 }

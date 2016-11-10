@@ -1,6 +1,6 @@
 package koalas.datavalue
 
-import math._
+import scala.math._
 
 abstract class DataValue {
   def apply(): Any

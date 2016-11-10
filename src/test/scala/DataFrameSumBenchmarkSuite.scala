@@ -5,7 +5,7 @@ import org.scalameter._
 
 import koalas.datasets.bikesharing.BikeSharing
 import koalas.datavalue._
-import koalas.numericalops.NumericalOpsImps._
+import koalas.numericalops.NumericalOps._
 import koalas.dataframe.DataFrame
 
 class DataFrameSumBenchmarkSuite extends FunSuite {

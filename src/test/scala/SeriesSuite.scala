@@ -8,7 +8,7 @@ import org.scalatest.Assertions._
 
 // import koalas.datasets.bikesharing.BikeSharing
 import koalas.datavalue._
-import koalas.numericalops.NumericalOpsImps._
+import koalas.numericalops.NumericalOps._
 import koalas.series.Series
 
 class SeriesSuite extends FunSuite {

@@ -93,4 +93,5 @@ final object DataFrame{
 
     new DataFrame(rowVector)
   }
+  def empty() = new DataFrame(Vector.empty: Vector[Row])
 }
