@@ -9,6 +9,14 @@ import koalas.row.Row
 import koalas.datavalue._
 
 object Pricing {
+  /**
+   * [priceBounds description]
+   * @param priceBounds
+   * @param storeFactors
+   * @param weekFactors
+   * @param gamma
+   * @param epsilon
+   */
   def makeDF(
       priceBounds: List[Tuple2[Double, Double]], storeFactors: List[Double],
       weekFactors: List[Double], gamma: DenseMatrix[Double], epsilon: Double): DataFrame = {
@@ -40,6 +48,21 @@ object Pricing {
     df
   }
 
+  /**
+   * [numItems description]
+   * @param numItems
+   * @param lowerPriceBound
+   * @param upperPriceBound
+   * @param numWeeks
+   * @param weekWeight
+   * @param numStores
+   * @param storeWeight
+   * @param gammaOwnMean
+   * @param gammaOwnVariance
+   * @param gammaCrossMean
+   * @param gammaCrossVariance
+   * @param epsilon
+   */
   def makeDF(
       numItems: Int = 5, lowerPriceBound: Double = 1.50, upperPriceBound: Double = 2.00,
       numWeeks: Int = 52, weekWeight: Double = 2.0, numStores: Int = 100,
