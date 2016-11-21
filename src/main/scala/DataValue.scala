@@ -44,6 +44,11 @@ final class NumericalValue(val element: Double) extends DataValue {
   def ~=(that: Any, precision: Double): Boolean = (element - anyToDouble(that)).abs < precision
 
   def unary_- : NumericalValue = NumericalValue(-element)
+
+  def isNaN: Boolean = element.isNaN
+  def isInfinity: Boolean = element.isInfinity
+  def isPosInfinity: Boolean = element.isPosInfinity
+  def isNegInfinity: Boolean = element.isNegInfinity
 }
 
 /** Factory for [[koalas.datavalue.NumericalValue]] instances. */
