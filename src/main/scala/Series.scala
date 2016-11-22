@@ -104,6 +104,8 @@ class Series[+T](val values: Vector[T]){
   def :~=(that: Any): Series[Boolean] = binaryOpOnAny[NumericalValue, Boolean](that, (a, b) => a ~= b)
   def :~=(that: Any, precision: Double): Series[Boolean] = binaryOpOnAny[NumericalValue, Boolean](that, (a, b) => a ~= (b, precision))
 
+  def sorted[B >: T](implicit num: Ordering[B]): Series[T] = Series(values.sorted(num))
+
   def sum[B >: T](implicit num: Numeric[B]): B = mySummary.getOrElseUpdate(
     "sum", values.reduce(num.plus)).asInstanceOf[B]
   def mean[A >: T](implicit num: Fractional[A]): A = mySummary.getOrElseUpdate(
