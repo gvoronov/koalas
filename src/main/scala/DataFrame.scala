@@ -15,7 +15,7 @@ final class DataFrame(override val values: Vector[Row]) extends Series[Row](valu
   def irow(i: Int): Row = values(i)
 
   def map(f: Row => Row): DataFrame = DataFrame(values.map(f))
-  def mapDF(f: Row => Row): DataFrame = DataFrame(values.map(f))
+  // def mapDF(f: Row => Row): DataFrame = DataFrame(values.map(f))
   override def filter(p: Row => Boolean): DataFrame = DataFrame(values.filter(p))
   override def groupBy[R](f: Row => R): Map[R, DataFrame] = values.groupBy(f).mapValues(DataFrame(_))
   override def partition(p: Row => Boolean): (DataFrame, DataFrame) = {

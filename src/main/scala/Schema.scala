@@ -5,7 +5,7 @@ import koalas.datavalue._
 
 abstract class Field {
   val fieldType: String
-  val column: String
+  val fieldName: String
 }
 
 final case class Schema(val fields: List[Field]) {
@@ -15,14 +15,14 @@ final case class Schema(val fields: List[Field]) {
     Row(dataList.zip(fields).map(x => conApplyMap(x._1, x._2)).toMap)
   }
   def apply(dataMap: Map[String, String]): Row =
-    Row(fields.map(field => conApplyMap(dataMap(field.column), field)).toMap)
+    Row(fields.map(field => conApplyMap(dataMap(field.fieldName), field)).toMap)
 
   // At sompe point add methods for pre and post appending fields
   def insert(i: Int, field: Field): Schema = {
     val (head, tail) = fields.splitAt(i)
     Schema(head ++ List(field) ++ tail)
   }
-  def columns: List[String] = fields.map(_.column)
+  def columns: List[String] = fields.map(_.fieldName)
   def length: Int = fields.length
 
   private def conApplyMap(data: String, field: Field): Tuple2[String, DataValue] = {
@@ -32,25 +32,37 @@ final case class Schema(val fields: List[Field]) {
       case "SimpleCategorical" => CategoricalValue(data)
       // Eventaully fix so that new classes get appeneded to the ClassCategoricalValue object
       case "ClassCategorical" =>
-        CategoricalValue(data, field.asInstanceOf[CategoricalField].classCategory)
+        CategoricalValue(data,
+          field.asInstanceOf[CategoricalField].classCategory
+            .getOrElse(throw new RuntimeException("fieldType improperly set!")))
     }
-    field.column -> value
+    field.fieldName -> value
   }
 }
 
-final case class NumericalField(val column: String) extends Field {
+final case class NumericalField(val fieldName: String) extends Field {
   val fieldType = "Numerical"
 }
 
 final case class CategoricalField(
-    val column: String, val classCategory: String = null, categorySet: Set[String] = Set())
+    val fieldName: String, val classCategory: Option[String] = None,
+    categorySet: Set[String] = Set())
     extends Field {
-  val fieldType = if (classCategory == null)
-    "SimpleCategorical"
-  else {
-    if (! categorySet.isEmpty) {
-      ClassCategoricalValue.setCategorySet(classCategory, categorySet)
+  val fieldType = classCategory match {
+    case None => "SimpleCategorical"
+    case Some(classCategory) => {
+      if (! categorySet.isEmpty) {
+        ClassCategoricalValue.setCategorySet(classCategory, categorySet)
+      }
+      "ClassCategorical"
     }
-    "ClassCategorical"
   }
+  // val fieldType = if (classCategory.isEmpty)
+  //   "SimpleCategorical"
+  // else {
+  //   if (! categorySet.isEmpty) {
+  //     ClassCategoricalValue.setCategorySet(classCategory, categorySet)
+  //   }
+  //   "ClassCategorical"
+  // }
 }

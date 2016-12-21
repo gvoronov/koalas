@@ -7,13 +7,13 @@ object BikeSharing {
   val daySchema: Schema = Schema(List(
     CategoricalField("instant"),
     CategoricalField("dteday"),
-    CategoricalField("season", "season", (1 to 4).map(_.toString).toSet),
+    CategoricalField("season", Some("season"), (1 to 4).map(_.toString).toSet),
     CategoricalField("yr"),
-    CategoricalField("mnth", "mnth", (1 to 12).map(_.toString).toSet),
-    CategoricalField("holiday", "holiday", Set("0", "1")),
-    CategoricalField("weekday", "weekday", (0 to 6).map(_.toString).toSet),
-    CategoricalField("workingday", "workingday", Set("0", "1")),
-    CategoricalField("weathersit", "weathersit", (1 to 4).map(_.toString).toSet),
+    CategoricalField("mnth", Some("mnth"), (1 to 12).map(_.toString).toSet),
+    CategoricalField("holiday", Some("holiday"), Set("0", "1")),
+    CategoricalField("weekday", Some("weekday"), (0 to 6).map(_.toString).toSet),
+    CategoricalField("workingday", Some("workingday"), Set("0", "1")),
+    CategoricalField("weathersit", Some("weathersit"), (1 to 4).map(_.toString).toSet),
     NumericalField("temp"),
     NumericalField("atemp"),
     NumericalField("hum"),
@@ -24,7 +24,7 @@ object BikeSharing {
   ))
 
   val hourSchema: Schema = daySchema.insert(
-    5, CategoricalField("hr", "hr", (0 to 23).map(_.toString).toSet))
+    5, CategoricalField("hr", Some("hr"), (0 to 23).map(_.toString).toSet))
 
   // Rename to loadDayDF and loadHourDF
   def loadDayDF: DataFrame = DataFrame.fromCSV(
