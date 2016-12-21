@@ -6,25 +6,26 @@ import koalas.schema._
 import koalas.csvfile.CSVFile
 import koalas.series.Series
 
-final class DataFrame(override val values: Vector[Row]) extends Series[Row](values) {
+final class DataFrame(override val values: Vector[Row], val schema: Option[Schema] = None)
+    extends Series[Row](values) {
   def apply[T](column: String): Series[T] = Series(values.map(row => row[T](column)))
   override def apply(subset: Series[Boolean]): DataFrame =
-    DataFrame(values.zip(subset.values).filter(_._2).map(_._1))
+    DataFrame(values.zip(subset.values).filter(_._2).map(_._1), schema)
 
   def select[T](column: String): Series[T] = Series(values.map(row => row[T](column)))
   def irow(i: Int): Row = values(i)
 
   def map(f: Row => Row): DataFrame = DataFrame(values.map(f))
   // def mapDF(f: Row => Row): DataFrame = DataFrame(values.map(f))
-  override def filter(p: Row => Boolean): DataFrame = DataFrame(values.filter(p))
-  override def groupBy[R](f: Row => R): Map[R, DataFrame] = values.groupBy(f).mapValues(DataFrame(_))
+  override def filter(p: Row => Boolean): DataFrame = DataFrame(values.filter(p), schema)
+  override def groupBy[R](f: Row => R): Map[R, DataFrame] = values.groupBy(f).mapValues(DataFrame(_, schema))
   override def partition(p: Row => Boolean): (DataFrame, DataFrame) = {
     val (left, right) = values.partition(p)
-    (DataFrame(left), DataFrame(right))
+    (DataFrame(left, schema), DataFrame(right, schema))
   }
 
-  def +(that: Row): DataFrame = DataFrame(values :+ that)
-  def ++(that: DataFrame): DataFrame = DataFrame(values ++ that.values)
+  def +(that: Row): DataFrame = DataFrame(values :+ that, schema)
+  def +(that: DataFrame): DataFrame = DataFrame(values ++ that.values, schema)
 
   def update(column: String, value: DataValue): DataFrame = map(_.update(column, value))
   def update(column: String, colValues: Series[DataValue]): DataFrame = DataFrame(
@@ -34,19 +35,28 @@ final class DataFrame(override val values: Vector[Row]) extends Series[Row](valu
   def sum(column: String): NumericalValue =
     values.asInstanceOf[Vector[Any]].reduce(DataFrame.sumRowElement(column)_)
     .asInstanceOf[NumericalValue]
+
+  def getSchema: Schema = schema.getOrElse({
+    if (values.isEmpty) Schema(List.empty)
+    else values.last.getSchema
+  })
+  def getColumns: List[String] = getSchema.columns
 }
 
 /** Factory for [[koalas.dataframe.DataFrame]] instances. */
 final object DataFrame{
-  def apply(rows: Vector[Row]): DataFrame = new DataFrame(rows)
-  def apply(rows: Iterable[Row]): DataFrame = new DataFrame(rows.toVector)
-  def apply(columnMap: Map[String, Vector[DataValue]]): DataFrame = {
+  def apply(rows: Vector[Row], schema: Option[Schema]): DataFrame = new DataFrame(rows, schema)
+  def apply(rows: Iterable[Row], schema: Option[Schema]): DataFrame = new DataFrame(rows.toVector, schema)
+  def apply(columnMap: Map[String, Vector[DataValue]], schema: Option[Schema]): DataFrame = {
     val length: Int = columnMap(columnMap.keysIterator.next).length
     def buildRow(i: Int): Row = Row(columnMap.map(column => column._1 -> column._2(i)))
     val rowVector: Vector[Row] = Range(0, length).map(buildRow).toVector
 
-    new DataFrame(rowVector)
+    new DataFrame(rowVector, schema)
   }
+  def apply(rows: Vector[Row]): DataFrame = apply(rows, None)
+  def apply(rows: Iterable[Row]): DataFrame = apply(rows, None)
+  def apply(columnMap: Map[String, Vector[DataValue]]): DataFrame = apply(columnMap, None)
   // def apply(columnMap: Map[String, Iterable[DataValue]]): DataFrame
   // def apply(columnMap: Map[String, Series[DataValue]]) = {
   //   new DataFrame(rowIterable)
@@ -91,7 +101,7 @@ final object DataFrame{
     else
       data.map(imapToList).map(schema(_)).toVector
 
-    new DataFrame(rowVector)
+    new DataFrame(rowVector, Some(schema))
   }
 
   /* Create an empty DataFrame */

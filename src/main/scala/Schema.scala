@@ -25,6 +25,8 @@ final case class Schema(val fields: List[Field]) {
   def columns: List[String] = fields.map(_.fieldName)
   def length: Int = fields.length
 
+  // Add functionality to select a field based on a name easily
+
   private def conApplyMap(data: String, field: Field): Tuple2[String, DataValue] = {
     val value: DataValue = field.fieldType match {
       // eventaully fix so that "" get mapped to NumericalValue(NaN)

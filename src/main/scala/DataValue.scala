@@ -93,13 +93,13 @@ final class SimpleCategoricalValue(val element: String) extends CategoricalValue
     that.isInstanceOf[SimpleCategoricalValue] && this.hashCode == that.hashCode
 }
 
-final class ClassCategoricalValue(element: String, categoryClass: String)
+final class ClassCategoricalValue(element: String, val categoryClass: String)
     extends CategoricalValue {
   val category: Int = ClassCategoricalValue.classCategoryMap(categoryClass)(element)
 
   def apply(): String = ClassCategoricalValue.classCategoryStringMap(categoryClass)(category)
 
-  override def hashCode: Int = ("ClassCategorical", category).hashCode
+  override def hashCode: Int = ("ClassCategorical", categoryClass, category).hashCode
   override def equals(that: Any): Boolean =
     that.isInstanceOf[ClassCategoricalValue] && this.hashCode == that.hashCode
 }

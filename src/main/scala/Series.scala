@@ -24,7 +24,7 @@ class Series[+T](val values: Vector[T]){
   }
 
   def +[A >: T](that: A): Series[A] = Series(values :+ that)
-  def ++[A >: T](that: Series[A]): Series[A] = Series(values ++ that.values)
+  def +[A >: T](that: Series[A]): Series[A] = Series(values ++ that.values)
 
   override def toString: String = values.toString
 

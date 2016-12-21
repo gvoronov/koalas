@@ -42,7 +42,7 @@ object Pricing {
         val qs = Row(q.toArray.toVector.zipWithIndex
           .map(pair => "q_" + pair._2.toString -> NumericalValue(pair._1)).toMap)
 
-        df = df + (row ++ ps ++ qs)
+        df = df + (row + ps + qs)
       }
     }
     df
