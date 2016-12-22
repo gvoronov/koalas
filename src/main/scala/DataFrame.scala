@@ -54,13 +54,14 @@ final object DataFrame{
 
     new DataFrame(rowVector, schema)
   }
-  def apply(rows: Vector[Row]): DataFrame = apply(rows, None)
-  def apply(rows: Iterable[Row]): DataFrame = apply(rows, None)
-  def apply(columnMap: Map[String, Vector[DataValue]]): DataFrame = apply(columnMap, None)
   // def apply(columnMap: Map[String, Iterable[DataValue]]): DataFrame
   // def apply(columnMap: Map[String, Series[DataValue]]) = {
   //   new DataFrame(rowIterable)
   // }
+  def apply(rows: Vector[Row]): DataFrame = apply(rows, None)
+  def apply(rows: Iterable[Row]): DataFrame = apply(rows, None)
+  def apply(columnMap: Map[String, Vector[DataValue]]): DataFrame = apply(columnMap, None)
+
   private def normalizeToNumerical(column: String, a: Any): NumericalValue = {
     a match {
       case _: Row => a.asInstanceOf[Row][NumericalValue](column)
