@@ -27,8 +27,5 @@ case class Row(val paramMap: Map[String, DataValue]){
       }
     }
     Schema(paramMap.map(rowColToField).toList)
-    // for ((column, dataValue) <- paramMap) {
-    //
-    // }
   }
 }

@@ -9,6 +9,8 @@ abstract class Field {
 }
 
 final case class Schema(val fields: List[Field]) {
+  lazy val nameToField: Map[String, Field] = fields.map(field => field.fieldName -> field).toMap
+
   def apply(dataList: List[String]): Row = {
     if (fields.length != dataList.length)
       throw new RuntimeException("dataList length does not match schema length")
@@ -16,6 +18,10 @@ final case class Schema(val fields: List[Field]) {
   }
   def apply(dataMap: Map[String, String]): Row =
     Row(fields.map(field => conApplyMap(dataMap(field.fieldName), field)).toMap)
+
+  def select(columns: Iterable[String]): Schema =
+    Schema(columns.map(column => nameToField(column)).toList)
+  def select(columns: String*): Schema = select(columns.toIterable)
 
   // At sompe point add methods for pre and post appending fields
   def insert(i: Int, field: Field): Schema = {

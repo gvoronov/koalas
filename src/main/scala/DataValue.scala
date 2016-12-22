@@ -61,26 +61,6 @@ final object NumericalValue {
   def getPrecision: Double = precision
 }
 
-/**
- * This trait can be used to define implicit object so that collections of NumericalValue's can be
- * summed via collection sum method.
- */
-// trait NumericNV extends Numeric[NumericalValue] {
-//   // Members declared in scala.math.Numeric
-//   def fromInt(x: Int): NumericalValue = NumericalValue(x)
-//   def minus(x: NumericalValue, y: NumericalValue): NumericalValue = x - y
-//   def negate(x: NumericalValue): NumericalValue = -x
-//   def plus(x: NumericalValue, y: NumericalValue): NumericalValue = x + y
-//   def times(x: NumericalValue, y: NumericalValue): NumericalValue = x * y
-//   def toDouble(x: NumericalValue): Double = x()
-//   def toFloat(x: NumericalValue): Float = x().toFloat
-//   def toInt(x: NumericalValue): Int = x().toInt
-//   def toLong(x: NumericalValue): Long = x().toLong
-//
-//   // Members declared in scala.math.Ordering
-//   def compare(x: NumericalValue, y: NumericalValue): Int = x() compare y()
-// }
-
 abstract class CategoricalValue extends DataValue {
   def apply(): String
 }

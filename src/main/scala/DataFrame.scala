@@ -13,6 +13,10 @@ final class DataFrame(override val values: Vector[Row], val schema: Option[Schem
     DataFrame(values.zip(subset.values).filter(_._2).map(_._1), schema)
 
   def select[T](column: String): Series[T] = Series(values.map(row => row[T](column)))
+  def select(columns: Iterable[String]): DataFrame =
+    DataFrame(values.map(row => row.select(columns)), Some(getSchema.select(columns)))
+  def select(columns: String*): DataFrame = select(columns.toIterable)
+
   def irow(i: Int): Row = values(i)
 
   def map(f: Row => Row): DataFrame = DataFrame(values.map(f))
