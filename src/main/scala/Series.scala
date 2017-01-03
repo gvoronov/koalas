@@ -22,6 +22,7 @@ class Series[+T](val values: Vector[T]){
     val (left, right) = values.partition(p)
     (Series[T](left), Series[T](right))
   }
+  def distinct: Series[T] = Series[T](values.distinct)
 
   def +[A >: T](that: A): Series[A] = Series(values :+ that)
   def +[A >: T](that: Series[A]): Series[A] = Series(values ++ that.values)
@@ -106,8 +107,8 @@ class Series[+T](val values: Vector[T]){
 
   def sorted[B >: T](implicit num: Ordering[B]): Series[T] = Series(values.sorted(num))
 
-  def sum[B >: T](implicit num: Numeric[B]): B = mySummary.getOrElseUpdate(
-    "sum", values.reduce(num.plus)).asInstanceOf[B]
+  def sum[A >: T](implicit num: Numeric[A]): A = mySummary.getOrElseUpdate(
+    "sum", values.reduce(num.plus)).asInstanceOf[A]
   def mean[A >: T](implicit num: Fractional[A]): A = mySummary.getOrElseUpdate(
     "mean", num.div(sum(num), num.fromInt(length))).asInstanceOf[A]
   def moment1[A >: T](implicit num: Fractional[A]): A = mySummary.getOrElseUpdate(
@@ -120,6 +121,11 @@ class Series[+T](val values: Vector[T]){
     mySummary.getOrElseUpdate(
       "variance", num.minus(moment2(num), num.pow(moment1(num), num.fromInt(2)))
     ).asInstanceOf[A]
+  def min[A >: T](implicit num: Numeric[A]): A = mySummary.getOrElseUpdate(
+    "min", values.reduce(num.min)).asInstanceOf[A]
+  def max[A >: T](implicit num: Numeric[A]): A = mySummary.getOrElseUpdate(
+    "max", values.reduce(num.max)).asInstanceOf[A]
+
 }
 
 object Series{

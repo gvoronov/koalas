@@ -8,7 +8,8 @@ import koalas.series.Series
 
 final class DataFrame(override val values: Vector[Row], val schema: Option[Schema] = None)
     extends Series[Row](values) {
-  def apply[T](column: String): Series[T] = Series(values.map(row => row[T](column)))
+  // def apply[T](column: String): Series[T] = Series(values.map(row => row[T](column)))
+  def apply[T](column: String): Series[T] = select[T](column)
   override def apply(subset: Series[Boolean]): DataFrame =
     DataFrame(values.zip(subset.values).filter(_._2).map(_._1), schema)
 
