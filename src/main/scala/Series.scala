@@ -105,6 +105,10 @@ class Series[+T](val values: Vector[T]){
   def :~=(that: Any): Series[Boolean] = binaryOpOnAny[NumericalValue, Boolean](that, (a, b) => a ~= b)
   def :~=(that: Any, precision: Double): Series[Boolean] = binaryOpOnAny[NumericalValue, Boolean](that, (a, b) => a ~= (b, precision))
 
+  // def :&()
+  // def :|()
+  // def :!()
+
   def sorted[B >: T](implicit num: Ordering[B]): Series[T] = Series(values.sorted(num))
 
   def sum[A >: T](implicit num: Numeric[A]): A = mySummary.getOrElseUpdate(
