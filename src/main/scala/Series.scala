@@ -133,5 +133,6 @@ object Series{
   def apply[T](values: Iterable[T]): Series[T] = new Series[T](values.toVector)
   def apply[T](values: T*): Series[T] = new Series[T](values.toVector)
 
+  def fill[A](n: Int)(value: A) = new Series[A](Vector.fill[A](n)(value))
   def empty[T]: Series[T] = new Series[T](Vector.empty)
 }
