@@ -105,9 +105,9 @@ class Series[+T](val values: Vector[T]){
   def :~=(that: Any): Series[Boolean] = binaryOpOnAny[NumericalValue, Boolean](that, (a, b) => a ~= b)
   def :~=(that: Any, precision: Double): Series[Boolean] = binaryOpOnAny[NumericalValue, Boolean](that, (a, b) => a ~= (b, precision))
 
-  // def :&()
-  // def :|()
-  // def :!()
+  def :&&(that: Any): Series[Boolean] = binaryOpOnAny[Boolean, Boolean](that, (a, b) => a && b)
+  def :||(that: Any): Series[Boolean] = binaryOpOnAny[Boolean, Boolean](that, (a, b) => a || b)
+  def :!(): Series[Boolean] = Series[Boolean](values.map(!_.asInstanceOf[Boolean]))
 
   def sorted[B >: T](implicit num: Ordering[B]): Series[T] = Series(values.sorted(num))
 
@@ -137,6 +137,6 @@ object Series{
   def apply[T](values: Iterable[T]): Series[T] = new Series[T](values.toVector)
   def apply[T](values: T*): Series[T] = new Series[T](values.toVector)
 
-  def fill[A](n: Int)(value: A) = new Series[A](Vector.fill[A](n)(value))
+  def fill[T](n: Int)(value: T) = new Series[T](Vector.fill[T](n)(value))
   def empty[T]: Series[T] = new Series[T](Vector.empty)
 }
