@@ -57,6 +57,10 @@ final object NumericalValue {
 
   def apply(element: Double): NumericalValue = new NumericalValue(element)
 
+  def posInf: NumericalValue = new NumericalValue(Double.PositiveInfinity)
+  def negInf: NumericalValue = new NumericalValue(Double.NegativeInfinity)
+  def NaN: NumericalValue = new NumericalValue(Double.NaN)
+
   def setPrecision(newPrecision: Double): Unit = {precision = newPrecision}
   def getPrecision: Double = precision
 }
