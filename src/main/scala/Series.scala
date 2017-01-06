@@ -9,6 +9,7 @@ import koalas.numericalops.NumericalOps._
 class Series[+T](val values: Vector[T]){
   private val mySummary: MutableMap[String, Any] = MutableMap.empty
   lazy val length: Int = values.length
+  lazy val isEmpty: Boolean = values.isEmpty
 
   def apply(index: Int): T = values(index)
   def apply(subset: Series[Boolean]): Series[T] =
@@ -32,6 +33,9 @@ class Series[+T](val values: Vector[T]){
   lazy val last: T = values.last
 
   private def binaryOpOnAny[D, R](that: Any, op: (D, D) => R): Series[R] = {
+    if (isEmpty)
+      return Series.empty[R]
+
     that match {
       case series: Series[Any] => {
         series.last match {
@@ -107,14 +111,16 @@ class Series[+T](val values: Vector[T]){
 
   def :&&(that: Any): Series[Boolean] = binaryOpOnAny[Boolean, Boolean](that, (a, b) => a && b)
   def :||(that: Any): Series[Boolean] = binaryOpOnAny[Boolean, Boolean](that, (a, b) => a || b)
-  def :!(): Series[Boolean] = Series[Boolean](values.map(!_.asInstanceOf[Boolean]))
-
+  def :!(): Series[Boolean] = {
+    if (isEmpty)
+      Series.empty[Boolean]
+    else
+      Series[Boolean](values.map(!_.asInstanceOf[Boolean]))
+  }
   def sorted[B >: T](implicit num: Ordering[B]): Series[T] = Series(values.sorted(num))
 
   def sum[A >: T](implicit num: Numeric[A]): A = mySummary.getOrElseUpdate(
-    "sum", values.fold(num.fromInt(0))(num.plus)).asInstanceOf[A]
-  // def sum[A >: T](implicit num: Numeric[A]): A = mySummary.getOrElseUpdate(
-  //   "sum", values.reduce(num.plus)).asInstanceOf[A]
+    "sum", values.fold(num.zero)(num.plus)).asInstanceOf[A]
   def mean[A >: T](implicit num: Fractional[A]): A = mySummary.getOrElseUpdate(
     "mean", num.div(sum(num), num.fromInt(length))).asInstanceOf[A]
   def moment1[A >: T](implicit num: Fractional[A]): A = mySummary.getOrElseUpdate(
@@ -127,11 +133,11 @@ class Series[+T](val values: Vector[T]){
     mySummary.getOrElseUpdate(
       "variance", num.minus(moment2(num), num.pow(moment1(num), num.fromInt(2)))
     ).asInstanceOf[A]
+  // Figure out what to do with empty series
   def min[A >: T](implicit num: Numeric[A]): A = mySummary.getOrElseUpdate(
     "min", values.reduce(num.min)).asInstanceOf[A]
   def max[A >: T](implicit num: Numeric[A]): A = mySummary.getOrElseUpdate(
     "max", values.reduce(num.max)).asInstanceOf[A]
-
 }
 
 object Series{
