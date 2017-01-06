@@ -112,7 +112,9 @@ class Series[+T](val values: Vector[T]){
   def sorted[B >: T](implicit num: Ordering[B]): Series[T] = Series(values.sorted(num))
 
   def sum[A >: T](implicit num: Numeric[A]): A = mySummary.getOrElseUpdate(
-    "sum", values.reduce(num.plus)).asInstanceOf[A]
+    "sum", values.fold(num.fromInt(0))(num.plus)).asInstanceOf[A]
+  // def sum[A >: T](implicit num: Numeric[A]): A = mySummary.getOrElseUpdate(
+  //   "sum", values.reduce(num.plus)).asInstanceOf[A]
   def mean[A >: T](implicit num: Fractional[A]): A = mySummary.getOrElseUpdate(
     "mean", num.div(sum(num), num.fromInt(length))).asInstanceOf[A]
   def moment1[A >: T](implicit num: Fractional[A]): A = mySummary.getOrElseUpdate(
