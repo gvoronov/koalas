@@ -1,5 +1,6 @@
 package koalas.series
 
+import scala.util.Random
 import scala.collection.mutable.{Map => MutableMap}
 
 import koalas.datavalue._
@@ -12,6 +13,7 @@ class Series[+T](val values: Vector[T]){
   lazy val isEmpty: Boolean = values.isEmpty
 
   def apply(index: Int): T = values(index)
+  def apply(index: Iterable[Int]) = Series[T](index.toVector.map(values(_)))
   def apply(subset: Series[Boolean]): Series[T] =
     Series(values.zip(subset.values).filter(_._2).map(_._1))
 
@@ -24,7 +26,12 @@ class Series[+T](val values: Vector[T]){
     (Series[T](left), Series[T](right))
   }
   def distinct: Series[T] = Series[T](values.distinct)
-
+  def sample(numSamples: Int, withReplacement: Boolean): Series[T] = {
+    if (withReplacement)
+      Series[T](Vector.fill(numSamples)(Random.nextInt(length)).map(values(_)))
+    else
+      Series[T](Random.shuffle((0 until length).toVector).take(numSamples).map(values(_)))
+  }
   def +[A >: T](that: A): Series[A] = Series(values :+ that)
   def +[A >: T](that: Series[A]): Series[A] = Series(values ++ that.values)
 

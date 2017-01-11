@@ -1,5 +1,7 @@
 package koalas.dataframe
 
+import scala.util.Random
+
 import koalas.row.Row
 import koalas.datavalue._
 import koalas.schema._
@@ -12,6 +14,7 @@ final class DataFrame(override val values: Vector[Row], val schema: Option[Schem
   def apply[T](column: String): Series[T] = select[T](column)
   override def apply(subset: Series[Boolean]): DataFrame =
     DataFrame(values.zip(subset.values).filter(_._2).map(_._1), schema)
+  override def apply(index: Iterable[Int]) = DataFrame(index.toVector.map(values(_)), schema)
 
   def select[T](column: String): Series[T] = Series(values.map(row => row[T](column)))
   def select(columns: Iterable[String]): DataFrame =
@@ -21,14 +24,19 @@ final class DataFrame(override val values: Vector[Row], val schema: Option[Schem
   def irow(i: Int): Row = values(i)
 
   def map(f: Row => Row): DataFrame = DataFrame(values.map(f))
-  // def mapDF(f: Row => Row): DataFrame = DataFrame(values.map(f))
   override def filter(p: Row => Boolean): DataFrame = DataFrame(values.filter(p), schema)
   override def groupBy[R](f: Row => R): Map[R, DataFrame] = values.groupBy(f).mapValues(DataFrame(_, schema))
   override def partition(p: Row => Boolean): (DataFrame, DataFrame) = {
     val (left, right) = values.partition(p)
     (DataFrame(left, schema), DataFrame(right, schema))
   }
-
+  override def sample(numSamples: Int, withReplacement: Boolean): DataFrame = {
+    val samples: Vector[Row] = if (withReplacement)
+      Vector.fill(numSamples)(Random.nextInt(length)).map(values(_))
+    else
+      Random.shuffle((0 until length).toVector).take(numSamples).map(values(_))
+    DataFrame(samples, schema)
+  }
   def +(that: Row): DataFrame = DataFrame(values :+ that, schema)
   def +(that: DataFrame): DataFrame = DataFrame(values ++ that.values, schema)
 
