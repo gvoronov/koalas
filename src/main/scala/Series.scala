@@ -1,14 +1,14 @@
 package koalas.series
 
 import scala.util.Random
-import scala.collection.mutable.{Map => MutableMap}
+import scala.collection.mutable
 
 import koalas.datavalue._
 import koalas.numericalops._
 import koalas.numericalops.NumericalOps._
 
 class Series[+T](val values: Vector[T]){
-  private val mySummary: MutableMap[String, Any] = MutableMap.empty
+  private val mySummary: mutable.Map[String, Any] = mutable.Map.empty
   lazy val length: Int = values.length
   lazy val isEmpty: Boolean = values.isEmpty
 
